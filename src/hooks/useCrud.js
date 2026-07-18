@@ -116,6 +116,7 @@ export function useCrud({
   select: customSelect,
   useJsonPayload = false,
   onSuccess, // Callback إضافي عند النجاح
+  disableSuccessToast = false,
 }) {
   const queryClient = useQueryClient();
   const formattedKey = Array.isArray(queryKey) ? queryKey : [queryKey];
@@ -167,7 +168,9 @@ export function useCrud({
       if (queryKey) {
         queryClient.invalidateQueries({ queryKey: formattedKey });
       }
-      handleSuccess(response, "تم الإضافة بنجاح", handleCloseModal);
+      if (!disableSuccessToast) {
+        handleSuccess(response, "تم الإضافة بنجاح", handleCloseModal);
+      }
       onSuccess?.(response);
     },
     onError: handleError,

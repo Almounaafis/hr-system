@@ -17,6 +17,7 @@ export default function Login() {
     endpoint: '',
     useJsonPayload: true,
     onSuccess: handleLoginSuccess,
+    disableSuccessToast: true,
   });
 
   function handleLoginSuccess(response) {
@@ -38,6 +39,7 @@ export default function Login() {
     });
 
     login({ user, token, requiresOTP });
+    toast.success(response?.message || "تم تسجيل الدخول بنجاح");
 
     if (requiresOTP) {
       navigate('/otp');
