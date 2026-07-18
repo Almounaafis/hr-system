@@ -1,4 +1,4 @@
-﻿import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import useAuthStore from '@/store/useAuthStore';
 import { useCrud } from '@/hooks/useCrud';
 import LoginPhotoPanel from '@/components/dashboard/auth/LoginPhotoPanel';
@@ -7,6 +7,7 @@ import { LoginForm } from '@/components/dashboard/auth/Login/LoginForm';
 import { SocialLogin } from '@/components/dashboard/auth/Login/SocialLogin';
 import { RegisterLink } from '@/components/dashboard/auth/Login/RegisterLink';
 import Cookies from 'js-cookie';
+import toast from 'react-hot-toast';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -18,10 +19,15 @@ export default function Login() {
     onSuccess: handleLoginSuccess,
   });
 
-function handleLoginSuccess(response) {
+  function handleLoginSuccess(response) {
     const token = response?.data?.accessToken || response?.accessToken || response?.data?.token || response?.token;
     const user = response?.data?.user || response?.user;
     const requiresOTP = response?.data?.requiresOTP || response?.requiresOTP || false;
+
+    if (user?.role === 'employee') {
+      toast.error("عفواً، لا يمكنك الدخول. هذا النظام مخصص لإدارة الموارد البشرية والمديرين فقط.");
+      return;
+    }
 
     if (!token) return console.warn('No token received');
 
