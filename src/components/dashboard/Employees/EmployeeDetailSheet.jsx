@@ -10,7 +10,7 @@ import { formatDate } from "../RequestsPage/helpers";
 import api from "@/lib/axios";
 import { useCrud } from "@/hooks/useCrud";
 import { PayrollDetails } from "../Payroll/PayrollDetails";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 
 function InfoRow({ icon: Icon, label, value }) {
   return (
@@ -61,7 +61,7 @@ function DocumentDownloadButton({ empId, doc }) {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Failed to download document:", error);
-      toast.error("حدث خطأ أثناء تحميل الملف");
+      // toast.error("حدث خطأ أثناء تحميل الملف");
     } finally {
       setDownloading(false);
     }
