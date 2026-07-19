@@ -6,7 +6,7 @@ import {
   MapPin, Briefcase, FileText, Loader2, Download
 } from "lucide-react";
 import { formatJoinDate } from "./utils";
-import { formatDate } from "../RequestsPage/helpers";
+import { formatDate } from "../RequestsPage/lib/helpers";
 import api from "@/lib/axios";
 import { useCrud } from "@/hooks/useCrud";
 import { PayrollDetails } from "../Payroll/PayrollDetails";
@@ -256,8 +256,8 @@ export function EmployeeDetailSheet({ selectedEmployee, onClose, onDelete, onEdi
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
                   className={`whitespace-nowrap text-sm sm:text-lg font-medium pb-3 border-b-2 transition-colors flex-shrink-0 ${activeTab === tab.id
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
                     }`}
                 >
                   {tab.label}

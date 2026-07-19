@@ -2,17 +2,17 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import FormInput from "@/shared/forms/FormInput";
 import { Info } from "lucide-react";
-import { useGeneratePayroll } from "@/hooks/usePayroll";
+import { useGeneratePayroll } from "@/components/dashboard/Payroll/hooks/usePayroll";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useCrud } from "@/hooks/useCrud";
 import { MONTH_OPTIONS } from "@/lib/constants";
 
- 
+
 export function CreatePayrollDialog({ open, onOpenChange }) {
   const { generatePayroll, isGenerating } = useGeneratePayroll();
   const { data: departments = [], isLoading: isLoadingDepartments } = useCrud({ queryKey: "departments", endpoint: "/departments" });
-  const { data: branches    = [], isLoading: isLoadingBranches } = useCrud({ queryKey: "branches",    endpoint: "/branches"    });
+  const { data: branches = [], isLoading: isLoadingBranches } = useCrud({ queryKey: "branches", endpoint: "/branches" });
 
   // Dynamic years: current year and previous 3 years
   const yearOptions = useMemo(() => {
@@ -59,15 +59,15 @@ export function CreatePayrollDialog({ open, onOpenChange }) {
     }
   };
 
-const departmentOptions = useMemo(
-  () => (departments ?? []).map((dept) => ({ value: dept, label: dept })),
-  [departments]
-);
+  const departmentOptions = useMemo(
+    () => (departments ?? []).map((dept) => ({ value: dept, label: dept })),
+    [departments]
+  );
 
-const branchOptions = useMemo(
-  () => (branches ?? []).map((branch) => ({ value: branch, label: branch })),
-  [branches]
-);
+  const branchOptions = useMemo(
+    () => (branches ?? []).map((branch) => ({ value: branch, label: branch })),
+    [branches]
+  );
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">

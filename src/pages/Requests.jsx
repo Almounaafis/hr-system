@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { COLUMN_CONFIG } from "@/components/dashboard/RequestsPage/constants";
+import { COLUMN_CONFIG } from "@/components/dashboard/RequestsPage/lib/constants";
 import { RequestColumn } from "@/components/dashboard/RequestsPage/RequestColumn";
 import { RequestDetailSheet } from "@/components/dashboard/RequestsPage/RequestDetailSheet";
 import {
@@ -11,8 +11,8 @@ import {
   RemoteWorkCard,
   AdvanceCard,
 } from "@/components/dashboard/RequestsPage/RequestCards";
-import { useRequests, useReviewRequest, useDeleteRequest } from "@/hooks/useRequests";
-import { useRequestFilters } from "../components/dashboard/RequestsPage/useRequestFilters";
+import { useRequests, useReviewRequest, useDeleteRequest } from "@/components/dashboard/RequestsPage/hooks/useRequests";
+import { useRequestFilters } from "../components/dashboard/RequestsPage/hooks/useRequestFilters";
 import { RequestsToolbar } from "../components/dashboard/RequestsPage/RequestsToolbar";
 
 export default function Requests() {
@@ -97,24 +97,24 @@ export default function Requests() {
   const allDepartments = Array.from(new Set(requests.map((r) => r.employee?.department)));
 
   const columns = [
-    { config: COLUMN_CONFIG.reward,         data: filteredReward,         kind: "reward",         Card: RewardCard         },
-    { config: COLUMN_CONFIG.leave,          data: filteredLeave,          kind: "leave",          Card: LeaveCard          },
-    { config: COLUMN_CONFIG.permission,     data: filteredPermission,     kind: "permission",     Card: PermissionCard     },
+    { config: COLUMN_CONFIG.reward, data: filteredReward, kind: "reward", Card: RewardCard },
+    { config: COLUMN_CONFIG.leave, data: filteredLeave, kind: "leave", Card: LeaveCard },
+    { config: COLUMN_CONFIG.permission, data: filteredPermission, kind: "permission", Card: PermissionCard },
     { config: COLUMN_CONFIG.salaryIncrease, data: filteredSalaryIncrease, kind: "salaryIncrease", Card: SalaryIncreaseCard },
-    { config: COLUMN_CONFIG.remoteWork,     data: filteredRemoteWork,     kind: "remoteWork",     Card: RemoteWorkCard     },
-    { config: COLUMN_CONFIG.advance,        data: filteredAdvance,        kind: "advance",        Card: AdvanceCard        },
+    { config: COLUMN_CONFIG.remoteWork, data: filteredRemoteWork, kind: "remoteWork", Card: RemoteWorkCard },
+    { config: COLUMN_CONFIG.advance, data: filteredAdvance, kind: "advance", Card: AdvanceCard },
   ].filter((col) => col.data.length > 0);
 
- 
+
 
   return (
     <Card className="space-y-6 p-4 sm:p-6 overflow-hidden">
       <RequestsToolbar
-        searchQuery={searchQuery}         setSearchQuery={setSearchQuery}
-        filterDate={filterDate}           setFilterDate={setFilterDate}
-        filterType={filterType}           setFilterType={setFilterType}
+        searchQuery={searchQuery} setSearchQuery={setSearchQuery}
+        filterDate={filterDate} setFilterDate={setFilterDate}
+        filterType={filterType} setFilterType={setFilterType}
         filterDepartment={filterDepartment} setFilterDepartment={setFilterDepartment}
-        filterStatus={filterStatus}       setFilterStatus={setFilterStatus}
+        filterStatus={filterStatus} setFilterStatus={setFilterStatus}
         allDepartments={allDepartments}
       />
 
@@ -127,20 +127,20 @@ export default function Requests() {
             لا توجد طلبات مطابقة للفلاتر الحالية
           </div>
         ) : (
-        <div className="flex gap-4 p-1 min-w-max snap-x snap-mandatory sm:snap-none">
-          {columns.map(({ config, data, kind, Card: RequestCard }) => (
-            <div key={kind} className="snap-start snap-always">
-              <RequestColumn
-                column={config}
-                requests={data}
-                onView={handleView(kind)}
-                renderCard={(request, onView) => (
-                  <RequestCard key={request.id} request={request} onView={onView} />
-                )}
-              />
-            </div>
-          ))}
-        </div>
+          <div className="flex gap-4 p-1 min-w-max snap-x snap-mandatory sm:snap-none">
+            {columns.map(({ config, data, kind, Card: RequestCard }) => (
+              <div key={kind} className="snap-start snap-always">
+                <RequestColumn
+                  column={config}
+                  requests={data}
+                  onView={handleView(kind)}
+                  renderCard={(request, onView) => (
+                    <RequestCard key={request.id} request={request} onView={onView} />
+                  )}
+                />
+              </div>
+            ))}
+          </div>
         )}
       </div>
 

@@ -3,12 +3,12 @@ import Pagination from "@/shared/components/Pagination";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AttendanceTable } from "@/components/dashboard/Attendance/AttendanceTable";
 import { EditAttendanceSheet } from "@/components/dashboard/Attendance/EditAttendanceSheet";
-import { useAttendance } from "@/hooks/useAttendance";
 import { useChangeAttendanceStatus } from "@/hooks/useEmployeeAttendance";
-import { useDebouncedValue } from "@/components/dashboard/Attendance/hooks/useDebouncedValue";
+import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
 import { TableToolbar } from "@/components/dashboard/Attendance/TableToolbar";
 import { AttendanceTableSkeleton } from "@/components/dashboard/Attendance/AttendanceTableSkeleton";
 import { mapAttendanceRecord } from "@/components/dashboard/Attendance/utils";
+import { useAttendance } from "@/components/dashboard/Attendance/hooks/useAttendance";
 
 export default function Attendance() {
   const today = new Date();
@@ -23,7 +23,11 @@ export default function Attendance() {
   const [editingRecord, setEditingRecord] = useState(null);
   const [editForm, setEditForm] = useState({ checkIn: "", checkOut: "", status: "" });
 
-  const debouncedSearch = useDebouncedValue(search, 400);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  const [debouncedSetSearch] = useDebouncedCallback((value) => {
+    setDebouncedSearch(value);
+  }, 400);
 
   const { data, isLoading, isError, error, refetch } = useAttendance({
     year,
@@ -53,6 +57,7 @@ export default function Attendance() {
   const handleSearchChange = (value) => {
     setSearch(value);
     setPage(1);
+    debouncedSetSearch(value);
   };
 
   const handleStatusChange = (value) => {

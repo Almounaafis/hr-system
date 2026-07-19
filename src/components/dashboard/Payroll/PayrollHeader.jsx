@@ -2,7 +2,7 @@ import { Plus, FileSpreadsheet, FileText, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/shared/forms/FormInput";
 import { useMemo } from "react";
-import { useExportPayroll } from "@/hooks/usePayroll";
+import { useExportPayroll } from "@/components/dashboard/Payroll/hooks/usePayroll";
 
 export function PayrollHeader({
   headerMonth,

@@ -13,7 +13,7 @@ import {
   usePayrollList,
   useApproveSalaries,
   useEditSalaryProfile,
-} from "@/hooks/usePayroll";
+} from "@/components/dashboard/Payroll/hooks/usePayroll";
 import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
 
 // Month name to number mapping
@@ -80,7 +80,7 @@ export default function Payroll() {
   // ── Live Payroll Data ─────────────────────────────────────────────────────
   const selectedMonthNumber = MONTH_NAME_TO_NUMBER[filterMonth] ?? currentMonthNumber;
   const selectedYearNumber = parseInt(headerYear, 10) || currentYear;
- const [debouncedSetSearch] = useDebouncedCallback((value) => {
+  const [debouncedSetSearch] = useDebouncedCallback((value) => {
     setDebouncedSearch(value);
     setCurrentPage(1); // رجّع لأول صفحة كل ما السيرش يتغير
   }, 400);
@@ -89,7 +89,7 @@ export default function Payroll() {
     setSearchQuery(value); // فوري - للـ input نفسه
     debouncedSetSearch(value); // متأخر - للـ request
   };
-const { payrolls, isLoading: isLoadingPayrolls, isRefetching } = usePayrollList({
+  const { payrolls, isLoading: isLoadingPayrolls, isRefetching } = usePayrollList({
     month: selectedMonthNumber,
     year: selectedYearNumber,
     search: debouncedSearch,
@@ -228,7 +228,7 @@ const { payrolls, isLoading: isLoadingPayrolls, isRefetching } = usePayrollList(
           <h2 className="text-lg font-bold text-foreground">
             كشف راتب {monthLabel} {headerYear}
           </h2>
-         <PayrollFilters
+          <PayrollFilters
             searchQuery={searchQuery}
             setSearchQuery={handleSearchChange}
             filterDate={filterMonth}

@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import { FormField, FormControl } from "@/components/ui/form-field";
 import { FilterDropdown } from "@/components/dashboard/RequestsPage/FilterDropdown";
-import { COLUMN_CONFIG, STATUS_LABELS } from "@/components/dashboard/RequestsPage/constants";
+import { COLUMN_CONFIG, STATUS_LABELS } from "@/components/dashboard/RequestsPage/lib/constants";
 import { DatePicker } from "@/shared/forms/DatePicker";
 
 export const RequestsToolbar = ({

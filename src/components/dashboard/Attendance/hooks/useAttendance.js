@@ -1,4 +1,4 @@
-import { useCrud } from './useCrud';
+import { useCrud } from '../../../../hooks/useCrud';
 
 export function useAttendance(filters = {}) {
   const { year, month, page, limit, search, status } = filters;

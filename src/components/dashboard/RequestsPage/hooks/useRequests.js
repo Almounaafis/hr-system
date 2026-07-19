@@ -1,4 +1,4 @@
-import { useCrud } from './useCrud';
+import { useCrud } from '../../../../hooks/useCrud';
 
 /**
  * Hook to fetch requests with filtering and pagination
@@ -65,7 +65,7 @@ export function useReviewRequest() {
 
   return {
     reviewRequest,
-    isReviewing: crud.updating, 
+    isReviewing: crud.updating,
   };
 }
 
@@ -85,7 +85,7 @@ export function useDeleteRequest() {
 
   return {
     deleteRequest,
-    isDeleting: crud.deleting,  
+    isDeleting: crud.deleting,
   };
 }
 

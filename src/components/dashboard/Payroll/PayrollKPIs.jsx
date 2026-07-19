@@ -1,19 +1,19 @@
 import { KPICard } from "./KPICard";
 import { DollarSign, CheckCircle, Clock, CreditCard } from "lucide-react";
-import { usePayrollTotals } from "@/hooks/usePayroll";
+import { usePayrollTotals } from "@/components/dashboard/Payroll/hooks/usePayroll";
 
 export function PayrollKPIs({ month, year }) {
   const { totals, isLoading } = usePayrollTotals({ month, year });
 
   // New response structure: { paid: {...}, unpaid: {...} }
   const totalSalaries =
-    totals?.paid?.total_net_salaries   ?? "—";
+    totals?.paid?.total_net_salaries ?? "—";
   const totalDeductions =
-    totals?.paid?.total_deductions  ?? "—";
+    totals?.paid?.total_deductions ?? "—";
   const paidCount =
-    totals?.paid?.employee_count  ?? "—";
+    totals?.paid?.employee_count ?? "—";
   const unpaidCount =
-    totals?.unpaid?.employee_count  ?? "—";
+    totals?.unpaid?.employee_count ?? "—";
 
   return (
     <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">

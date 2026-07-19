@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Send, Download, Loader2, Edit2, Check, X } from "lucide-react";
 import { SalaryBreakdownCard } from "./SalaryBreakdownCard";
 import toast from "react-hot-toast";
-import { useEmployeePayrollDetails, useDownloadPayrollSlip, useSendPayrollSlip } from "@/hooks/usePayroll";
+import { useEmployeePayrollDetails, useDownloadPayrollSlip, useSendPayrollSlip } from "@/components/dashboard/Payroll/hooks/usePayroll";
 import FormInput from "@/shared/forms/FormInput";
 import { MONTH_OPTIONS } from "@/lib/constants";
 

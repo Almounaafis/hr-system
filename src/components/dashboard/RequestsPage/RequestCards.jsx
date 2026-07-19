@@ -1,5 +1,5 @@
 import { RequestCardShell, FieldPair } from "./SharedCardComponents";
-import { formatDate } from "./helpers";
+import { formatDate } from "./lib/helpers";
 
 export function RewardCard({ request, onView }) {
   return (
