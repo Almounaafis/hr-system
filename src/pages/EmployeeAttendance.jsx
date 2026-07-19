@@ -70,7 +70,7 @@ const EmployeeAttendance = () => {
 
             </div>
             {
-                 attendanceLoading  ? <div className="p-4 text-center text-muted-foreground">جاري التحميل...</div> : (
+                attendanceLoading ? <div className="p-4 text-center text-muted-foreground">جاري التحميل...</div> : (
                     <>
                         <Card className="mt-5 px-4" >
 
@@ -92,7 +92,7 @@ const EmployeeAttendance = () => {
                                 <Badge
                                     className="flex items-center gap-1.5 px-3 h-7"
                                     style={{
-                                        backgroundColor: "#BEF8C2",
+                                        backgroundColor: "#bef8c293",
                                         color: "#26BF66",
                                         border: "none",
                                         borderRadius: "6px",

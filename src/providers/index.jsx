@@ -28,6 +28,8 @@ export function Providers({ children }) {
                     queries: {
                         retry: 1,
                         refetchOnWindowFocus: false,
+                        staleTime: Infinity, // Cache data indefinitely
+                        gcTime: 1000 * 60 * 60 * 24, // Keep cache for 24 hours
                     },
                 },
             })

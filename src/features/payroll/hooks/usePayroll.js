@@ -14,7 +14,6 @@ export function usePayrollList({ month, year, search } = {}) {
     queryKey: ["payroll-list", month, year, search],
     endpoint,
     enabled: !!(month && year),
-    staleTime: 0,
     select: (data) => {
       if (Array.isArray(data)) return data;
       if (Array.isArray(data?.data)) return data.data;
@@ -43,7 +42,6 @@ export function usePayrollTotals({ month, year } = {}) {
     queryKey: ["payroll-totals", month, year],
     endpoint,
     enabled: !!(month && year),
-    staleTime: 0,
     select: (data) => data?.data ?? data,
   });
 
