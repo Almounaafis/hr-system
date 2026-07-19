@@ -85,7 +85,7 @@ const EmployeeCard = memo(function EmployeeCard({
         <div>
           <p className="text-xs sm:text-base text-[#101011B2]">رقم ID</p>
           <p className="mt-1 sm:mt-2 text-xs sm:text-sm font-semibold text-[#101011]">
-            {formatEmployeeId(employee.id)}
+            {formatEmployeeId(employee.employee_code)}
           </p>
         </div>
 
