@@ -19,7 +19,7 @@ function fmt(val) {
   return isNaN(n) ? "—" : n.toLocaleString("en-EG");
 }
 
-export function sPayrollTable({ data, onAddDeduction, onAddAllowance, onViewDetails, selectedEmployeeIds, setSelectedEmployeeIds, isLoading }) {
+export function PayrollTable({ data, onAddDeduction, onAddAllowance, onViewDetails, selectedEmployeeIds, setSelectedEmployeeIds, isLoading }) {
   const handleCheckboxChange = (employeeId) => {
     if (selectedEmployeeIds.includes(employeeId)) {
       setSelectedEmployeeIds(selectedEmployeeIds.filter(id => id !== employeeId));
