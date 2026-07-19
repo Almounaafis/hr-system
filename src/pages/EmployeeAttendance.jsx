@@ -1,6 +1,4 @@
-﻿import { Button } from '@/components/ui/button'
-import { Download } from 'lucide-react'
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import imgHour from "../assets/hour-work.png";
@@ -17,16 +15,12 @@ const EmployeeAttendance = () => {
     const { id } = useParams();
     const [selectedMonth, setSelectedMonth] = useState(String(new Date().getMonth() + 1));
 
-    const { data: attendanceData, isLoading: attendanceLoading, refetch } = useEmployeeAttendance(id, { month: selectedMonth });
+    const { data: attendanceData, isLoading: attendanceLoading, employee, employeeLoading, refetch } = useEmployeeAttendance(id, { month: selectedMonth });
 
     const handleMonthChange = (e) => {
         setSelectedMonth(e.target.value);
         refetch();
     };
-
-
-    // Extract employee info from the first attendance record
-    const employee = attendanceData?.records?.[0]?.employee || {};
 
     const stats = attendanceData?.stats || {};
 
@@ -62,15 +56,11 @@ const EmployeeAttendance = () => {
                         placeholder="اختر الشهر"
                         className="min-w-[150px] bg-white"
                     />
-                    <Button className="flex items-center px-5  gap-1.5 h-10">
-                        <Download className="w-5 h-5" />
-                        طباعة
-                    </Button>
                 </div>
 
             </div>
             {
-                attendanceLoading ? <div className="p-4 text-center text-muted-foreground">جاري التحميل...</div> : (
+                (attendanceLoading || employeeLoading) ? <div className="p-4 text-center text-muted-foreground">جاري التحميل...</div> : (
                     <>
                         <Card className="mt-5 px-4" >
 

@@ -24,7 +24,6 @@ export function useEmployeeAttendance(employeeId, filters = {}) {
     queryKey: ["employee-attendance", employeeId, filters],
     endpoint,
     enabled: !!employeeId,
-    staleTime: 300000, // 5 minutes
     select: (data) => {
       // Handle both old format (with records/stats) and new format (direct array)
       const responseData = data?.data || data;
@@ -35,9 +34,20 @@ export function useEmployeeAttendance(employeeId, filters = {}) {
     },
   });
 
+  // Fetch employee data separately
+  const { data: employeeData, isLoading: employeeLoading } = useCrud({
+    queryKey: ["employee", employeeId],
+    endpoint: employeeId ? `/employees/${employeeId}` : null,
+    enabled: !!employeeId,
+  });
+
+  const employee = employeeData?.data ?? employeeData ?? {};
+
   return {
     ...crud,
     data: crud.data,
+    employee,
+    employeeLoading,
   };
 }
 
