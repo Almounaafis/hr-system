@@ -64,33 +64,7 @@ export const weekDays = [
   { id: "fri", label: "الجمعة" }
 ];
 
-export const mockEmployees = [
-  { id: 1, name: "أحمد محمد", position: "محاسب", photo: "https://i.pravatar.cc/150?img=12", avatar: "أ", avatarBg: "bg-blue-100", avatarColor: "text-blue-600" },
-  { id: 2, name: "سارة أحمد", position: "مدير مبيعات", photo: "https://i.pravatar.cc/150?img=12", avatar: "س", avatarBg: "bg-purple-100", avatarColor: "text-purple-600" },
-  { id: 3, name: "محمد علي", position: "موارد بشرية", photo: "https://i.pravatar.cc/150?img=12", avatar: "م", avatarBg: "bg-green-100", avatarColor: "text-green-600" },
-  { id: 4, name: "فاطمة خالد", position: "مهندس برمجيات", photo: "https://i.pravatar.cc/150?img=12", avatar: "ف", avatarBg: "bg-orange-100", avatarColor: "text-orange-600" },
-  { id: 5, name: "عمر حسن", position: "محاسب", photo: "https://i.pravatar.cc/150?img=12", avatar: "ع", avatarBg: "bg-teal-100", avatarColor: "text-teal-600" },
-  { id: 6, name: "نورة سعيد", position: "مدير مبيعات", photo: "https://i.pravatar.cc/150?img=12", avatar: "ن", avatarBg: "bg-pink-100", avatarColor: "text-pink-600" },
-];
 
-export const initialNewShiftForm = {
-  name: "شيفت متغير",
-  arrivalTime: "09:00 ص",
-  departureTime: "05:00 ص",
-  workDays: ["sat", "sun", "mon", "tue", "wed"],
-  department: "",
-  departmentSearch: "",
-  assignedDepartments: [],
-  dayTimes: {
-    sat: { arrival: "09:00 ص", departure: "05:00 ص" },
-    sun: { arrival: "10:00 ص", departure: "06:00 ص" },
-    mon: { arrival: "08:00 ص", departure: "04:00 ص" },
-    tue: { arrival: "09:00 ص", departure: "05:00 ص" },
-    wed: { arrival: "09:00 ص", departure: "05:00 ص" },
-    thu: { arrival: "09:00 ص", departure: "05:00 ص" },
-    fri: { arrival: "09:00 ص", departure: "05:00 ص" }
-  }
-};
 
 export const initialDeductionTiers = [
   { id: "t1", from: 15, to: 30, deduction: "quarter_day" },
@@ -111,8 +85,6 @@ export const initialLeaveBalance = {
   annualLeave: 21,
   rolloverPolicy: "carry_forward" // "carry_forward" | "expire"
 };
-
-export const dayOptions = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
 
 export const timeOptions = [
   { value: "04:00", label: "04:00 ص" },
