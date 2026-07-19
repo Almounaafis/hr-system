@@ -67,7 +67,6 @@ export default function Attendance() {
 
 
   const handleSaveEdit = () => {
-    console.log("Saving edit for record:", editingRecord.id, editForm);
     setEditingRecord(null);
   };
 

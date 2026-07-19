@@ -153,7 +153,6 @@ function MobileDepartmentCard({ department, onMakeHead, onRemoveEmployee, pendin
 
 function DepartmentColumn({ department, idx, total, onMakeHead, onRemoveEmployee, pendingAction }) {
   const color = colorFor(department.colorId);
-console.log(department)
   return (
     <div className="relative flex w-52 lg:w-64 flex-shrink-0 flex-col items-stretch">
       <div className="relative h-10 w-full">

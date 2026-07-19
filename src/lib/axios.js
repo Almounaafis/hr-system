@@ -1,6 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
+import useAuthStore from "../store/useAuthStore";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -22,7 +23,8 @@ api.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       Cookies.remove('authTokenBasma');
-      // window.location.href = '/login';
+      useAuthStore.getState().logout();
+      window.location.href = '/login';
     } else if (error.response?.status === 403) {
       toast.error("ليس لديك صلاحية للوصول لهذا المورد");
     } else if (error.response?.status >= 500) {

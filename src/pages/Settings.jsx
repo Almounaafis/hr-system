@@ -64,8 +64,6 @@ const shifts = useMemo(() => {
   // Sync state with API data when it loads
   useEffect(() => {
     if (settingsData) {
-      console.log("Settings data from API:", settingsData);
-      
       const newPayrollCycle = {
         cycleType: settingsData.payroll_cycle_type || "fixed_30_days",
         mode: settingsData.payroll_cycle_type === "fixed_30_days" ? "fixed" : "flexible",
@@ -209,7 +207,6 @@ const shifts = useMemo(() => {
         leave_rollover_policy: data.leaveBalance.rolloverPolicy,
       };
 
-      console.log("Saving settings payload:", payload);
       await updateSettings(payload);
     } catch (error) {
       console.error("Error saving settings:", error);

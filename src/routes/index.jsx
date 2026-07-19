@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import Cookies from "js-cookie";
 
 import DashboardLayout from "../layouts/DashboardLayout";
 import useAuthStore from "../store/useAuthStore";
@@ -25,8 +26,10 @@ const ResetPassword = lazy(() => import("../pages/ResetPassword"));
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const cookieExists = !!Cookies.get('authTokenBasma');
 
-  if (!isAuthenticated) {
+  // 🔒 Security: check BOTH store state AND actual cookie
+  if (!isAuthenticated || !cookieExists) {
     return <Navigate to="/login" replace />;
   }
 
