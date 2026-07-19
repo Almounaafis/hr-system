@@ -1,4 +1,4 @@
-import { useCrud } from "./useCrud";
+import { useCrud } from "@/hooks/useCrud";
 
 export function useProfile() {
   const crud = useCrud({
