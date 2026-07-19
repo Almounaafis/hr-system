@@ -1,4 +1,4 @@
-﻿import { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import toast from "react-hot-toast";
 import { PayrollHeader } from "@/components/dashboard/Payroll/PayrollHeader";
 import { PayrollFilters } from "@/components/dashboard/Payroll/PayrollFilters";
@@ -227,11 +227,6 @@ const { payrolls, isLoading: isLoadingPayrolls, isRefetching } = usePayrollList(
         <div className="flex flex-wrap md:flex-nowrap items-center gap-4 mb-6 justify-between">
           <h2 className="text-lg font-bold text-foreground">
             كشف راتب {monthLabel} {headerYear}
-            {(isLoadingPayrolls || isRefetching) && (
-              <span className="mr-2 text-sm font-normal text-muted-foreground">
-                جاري التحميل...
-              </span>
-            )}
           </h2>
          <PayrollFilters
             searchQuery={searchQuery}
@@ -249,6 +244,7 @@ const { payrolls, isLoading: isLoadingPayrolls, isRefetching } = usePayrollList(
           />
         </div>
         <PayrollContent
+          isLoading={isLoadingPayrolls || isRefetching}
           filteredEmployees={paginatedEmployees}
           currentPage={currentPage}
           totalPages={totalPages}

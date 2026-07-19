@@ -1,7 +1,7 @@
 import { PayrollTable } from "./PayrollTable";
 import Pagination from "@/shared/components/Pagination";
 
-export function PayrollContent({ filteredEmployees, currentPage, totalPages, setCurrentPage, onAddDeduction, onAddAllowance, onViewDetails, selectedEmployeeIds, setSelectedEmployeeIds }) {
+export function PayrollContent({ filteredEmployees, currentPage, totalPages, setCurrentPage, onAddDeduction, onAddAllowance, onViewDetails, selectedEmployeeIds, setSelectedEmployeeIds, isLoading }) {
   return (
     <>
       <PayrollTable
@@ -11,6 +11,7 @@ export function PayrollContent({ filteredEmployees, currentPage, totalPages, set
         onViewDetails={onViewDetails}
         selectedEmployeeIds={selectedEmployeeIds}
         setSelectedEmployeeIds={setSelectedEmployeeIds}
+        isLoading={isLoading}
       />
 
       {filteredEmployees.length > 0 && (

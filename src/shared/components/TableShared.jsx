@@ -1,11 +1,13 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Loader2 } from "lucide-react";
 
 export default function TableShared({ 
   columns,
   data,
   onRowClick,
   rowClassName = "",
-  emptyMessage = "لا توجد بيانات"
+  emptyMessage = "لا توجد بيانات",
+  isLoading = false
 }) {
   return (
     <Table>
@@ -22,7 +24,15 @@ export default function TableShared({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.length === 0 ? (
+        {isLoading ? (
+          <TableRow>
+            <TableCell colSpan={columns.length} className="text-center py-8 text-muted-foreground">
+              <div className="flex justify-center items-center">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            </TableCell>
+          </TableRow>
+        ) : data.length === 0 ? (
           <TableRow>
             <TableCell 
               colSpan={columns.length} 
