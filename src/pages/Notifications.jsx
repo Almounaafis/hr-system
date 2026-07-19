@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
@@ -10,8 +10,8 @@ import { Loader2, CheckCheck } from "lucide-react";
 import imageLate from "../assets/notification-late.png";
 import imageOrder from "../assets/notification-order.png";
 import imageAdd from "../assets/notification-add.png";
-import { useNotificationsData } from "@/components/dashboard/notifications/hooks/useNotificationsData";
-import NotificationCard from "@/components/dashboard/notifications/NotificationCard ";
+import { useNotificationsData } from "@/features/notifications/hooks/useNotificationsData";
+import NotificationCard from "@/features/notifications/NotificationCard ";
 
 // ─── تحويل نوع الإشعار ─────────────────────────────
 const NOTIFICATION_META = {

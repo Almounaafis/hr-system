@@ -1,11 +1,11 @@
-import { useNavigate } from 'react-router-dom';
+﻿import { useNavigate } from 'react-router-dom';
 import useAuthStore from '@/store/useAuthStore';
 import { useCrud } from '@/hooks/useCrud';
-import LoginPhotoPanel from '@/components/dashboard/auth/LoginPhotoPanel';
-import { LoginHeader } from '@/components/dashboard/auth/Login/LoginHeader';
-import { LoginForm } from '@/components/dashboard/auth/Login/LoginForm';
-import { SocialLogin } from '@/components/dashboard/auth/Login/SocialLogin';
-import { RegisterLink } from '@/components/dashboard/auth/Login/RegisterLink';
+import LoginPhotoPanel from '@/features/auth/LoginPhotoPanel';
+import { LoginHeader } from '@/features/auth/Login/LoginHeader';
+import { LoginForm } from '@/features/auth/Login/LoginForm';
+import { SocialLogin } from '@/features/auth/Login/SocialLogin';
+import { RegisterLink } from '@/features/auth/Login/RegisterLink';
 import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
 

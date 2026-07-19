@@ -1,19 +1,19 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo } from "react";
 import toast from "react-hot-toast";
-import { PayrollHeader } from "@/components/dashboard/Payroll/PayrollHeader";
-import { PayrollFilters } from "@/components/dashboard/Payroll/PayrollFilters";
-import { PayrollKPIs } from "@/components/dashboard/Payroll/PayrollKPIs";
-import { PayrollContent } from "@/components/dashboard/Payroll/PayrollContent";
-import { CreatePayrollDialog } from "@/components/dashboard/Payroll/CreatePayrollDialog";
-import { AddDeductionAllowanceDialog } from "@/components/dashboard/Payroll/AddDeductionAllowanceDialog";
-import { EmployeePayrollSheet } from "@/components/dashboard/Payroll/EmployeePayrollSheet";
+import { PayrollHeader } from "@/features/payroll/PayrollHeader";
+import { PayrollFilters } from "@/features/payroll/PayrollFilters";
+import { PayrollKPIs } from "@/features/payroll/PayrollKPIs";
+import { PayrollContent } from "@/features/payroll/PayrollContent";
+import { CreatePayrollDialog } from "@/features/payroll/CreatePayrollDialog";
+import { AddDeductionAllowanceDialog } from "@/features/payroll/AddDeductionAllowanceDialog";
+import { EmployeePayrollSheet } from "@/features/payroll/EmployeePayrollSheet";
 import {
   usePayrollDeductions,
   usePayrollBonuses,
   usePayrollList,
   useApproveSalaries,
   useEditSalaryProfile,
-} from "@/components/dashboard/Payroll/hooks/usePayroll";
+} from "@/features/payroll/hooks/usePayroll";
 import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
 
 // Month name to number mapping

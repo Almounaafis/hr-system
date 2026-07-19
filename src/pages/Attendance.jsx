@@ -1,14 +1,14 @@
-import { useState, useMemo } from "react";
-import Pagination from "@/shared/components/Pagination";
+﻿import { useState, useMemo } from "react";
+import Pagination from "@/components/shared/Pagination";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AttendanceTable } from "@/components/dashboard/Attendance/AttendanceTable";
-import { EditAttendanceSheet } from "@/components/dashboard/Attendance/EditAttendanceSheet";
-import { useChangeAttendanceStatus } from "@/hooks/useEmployeeAttendance";
+import { AttendanceTable } from "@/features/attendance/AttendanceTable";
+import { EditAttendanceSheet } from "@/features/attendance/EditAttendanceSheet";
+import { useChangeAttendanceStatus } from "@/features/employees/hooks/useEmployeeAttendance";
 import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
-import { TableToolbar } from "@/components/dashboard/Attendance/TableToolbar";
-import { AttendanceTableSkeleton } from "@/components/dashboard/Attendance/AttendanceTableSkeleton";
-import { mapAttendanceRecord } from "@/components/dashboard/Attendance/utils";
-import { useAttendance } from "@/components/dashboard/Attendance/hooks/useAttendance";
+import { TableToolbar } from "@/features/attendance/TableToolbar";
+import { AttendanceTableSkeleton } from "@/features/attendance/AttendanceTableSkeleton";
+import { mapAttendanceRecord } from "@/features/attendance/utils";
+import { useAttendance } from "@/features/attendance/hooks/useAttendance";
 
 export default function Attendance() {
   const today = new Date();

@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+﻿import { Button } from '@/components/ui/button'
 import { PenLine, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -9,9 +9,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import userInfoimg from "../assets/user-info.png"
 import toast from "react-hot-toast"
 
-import { useProfile } from '@/components/dashboard/profile/hooks/useProfile';
-import FormInput from '@/shared/forms/FormInput';
-import { DatePicker } from '@/shared/forms/DatePicker';
+import { useProfile } from '@/features/profile/hooks/useProfile';
+import FormInput from '@/components/shared/forms/FormInput';
+import { DatePicker } from '@/components/shared/forms/DatePicker';
 
 const READ_ONLY_CLASS = `
   h-12 px-4 rounded-xl text-right

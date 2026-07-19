@@ -1,11 +1,11 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import useAuthStore from '@/store/useAuthStore';
 import { useCrud } from '@/hooks/useCrud';
-import LoginPhotoPanel from '@/components/dashboard/auth/LoginPhotoPanel';
-import { ForgotPasswordHeader } from '@/components/dashboard/auth/ForgotPassword/ForgotPasswordHeader';
-import { ForgotPasswordForm } from '@/components/dashboard/auth/ForgotPassword/ForgotPasswordForm';
+import LoginPhotoPanel from '@/features/auth/LoginPhotoPanel';
+import { ForgotPasswordHeader } from '@/features/auth/ForgotPassword/ForgotPasswordHeader';
+import { ForgotPasswordForm } from '@/features/auth/ForgotPassword/ForgotPasswordForm';
 
 export default function ForgotPassword() {
   const navigate = useNavigate();

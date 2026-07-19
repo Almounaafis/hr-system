@@ -1,8 +1,8 @@
-// DashboardLayout.jsx
+﻿// DashboardLayout.jsx
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import AppSidebar from "@/components/layout/AppSidebar";
-import TopNavbar from "@/components/layout/TopNavbar";
+import AppSidebar from "@/layouts/AppSidebar";
+import TopNavbar from "@/layouts/TopNavbar";
 
 export default function DashboardLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);

@@ -1,9 +1,9 @@
-import KPICard from "@/components/dashboard/DashboardPage/KPICard";
-import TodayActivityCard from "@/components/dashboard/DashboardPage/TodayActivity";
-import LatestRequestsCard from "@/components/dashboard/DashboardPage/LatestRequests";
+﻿import KPICard from "@/features/dashboard/KPICard";
+import TodayActivityCard from "@/features/dashboard/TodayActivity";
+import LatestRequestsCard from "@/features/dashboard/LatestRequests";
 import Attendance from "./Attendance";
 import { useCrud } from "@/hooks/useCrud";
-import { transformKPIs, transformTodayActivity } from "@/components/dashboard/DashboardPage/transformKPIs";
+import { transformKPIs, transformTodayActivity } from "@/features/dashboard/transformKPIs";
 
 
 export default function Dashboard({ onViewRequests }) {

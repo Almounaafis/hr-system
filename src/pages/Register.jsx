@@ -1,11 +1,11 @@
 ﻿import { useNavigate, useSearchParams } from 'react-router-dom';
 import useAuthStore from '@/store/useAuthStore';
 import { useCrud } from '@/hooks/useCrud';
-import LoginPhotoPanel from '@/components/dashboard/auth/LoginPhotoPanel';
-import { RegisterHeader } from '@/components/dashboard/auth/Register/RegisterHeader';
-import { RegisterForm } from '@/components/dashboard/auth/Register/RegisterForm';
-import { SocialLogin } from '@/components/dashboard/auth/Login/SocialLogin';
-import { RegisterFooter } from '@/components/dashboard/auth/Register/RegisterFooter';
+import LoginPhotoPanel from '@/features/auth/LoginPhotoPanel';
+import { RegisterHeader } from '@/features/auth/Register/RegisterHeader';
+import { RegisterForm } from '@/features/auth/Register/RegisterForm';
+import { SocialLogin } from '@/features/auth/Login/SocialLogin';
+import { RegisterFooter } from '@/features/auth/Register/RegisterFooter';
 
 export default function Register() {
   const navigate = useNavigate();

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 import { Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useForm, FormProvider } from "react-hook-form";
@@ -11,16 +11,16 @@ import {
   initialDeductionPolicy,
   initialLeaveBalance,
   // weekDays
-} from "@/components/dashboard/Settings/mockData";
-import { PayrollCycleTab } from "@/components/dashboard/Settings/PayrollCycleTab";
-import { LocationSettingsTab } from "@/components/dashboard/Settings/LocationSettingsTab";
-import { WorkHoursTab } from "@/components/dashboard/Settings/WorkHoursTab";
-import { DeductionPolicyTab } from "@/components/dashboard/Settings/DeductionPolicyTab";
-import { LeaveBalanceTab } from "@/components/dashboard/Settings/LeaveBalanceTab";
-import { TabBar } from "@/components/dashboard/Settings/TabBar";
-import { AddShiftDialog } from "@/components/dashboard/Settings/AddShiftDialog";
-import { useSettings } from "@/components/dashboard/Settings/hooks/useSettings";
-import { useShifts } from "@/components/dashboard/Settings/hooks/useShifts";
+} from "@/features/settings/mockData";
+import { PayrollCycleTab } from "@/features/settings/PayrollCycleTab";
+import { LocationSettingsTab } from "@/features/settings/LocationSettingsTab";
+import { WorkHoursTab } from "@/features/settings/WorkHoursTab";
+import { DeductionPolicyTab } from "@/features/settings/DeductionPolicyTab";
+import { LeaveBalanceTab } from "@/features/settings/LeaveBalanceTab";
+import { TabBar } from "@/features/settings/TabBar";
+import { AddShiftDialog } from "@/features/settings/AddShiftDialog";
+import { useSettings } from "@/features/settings/hooks/useSettings";
+import { useShifts } from "@/features/settings/hooks/useShifts";
 
 export default function PayrollAttendancePolicy() {
   const [activeTab, setActiveTab] = useState("payroll-cycle");

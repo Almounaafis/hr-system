@@ -1,10 +1,10 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useCrud } from "@/hooks/useCrud";
-import Stepper from "@/components/dashboard/auth/HrInvitaion/Stepper";
-import InvitationStep from "@/components/dashboard/auth/HrInvitaion/InvitationStep";
-import AccountSetupStep from "@/components/dashboard/auth/HrInvitaion/AccountSetupStep";
+import Stepper from "@/features/auth/HrInvitation/Stepper";
+import InvitationStep from "@/features/auth/HrInvitation/InvitationStep";
+import AccountSetupStep from "@/features/auth/HrInvitation/AccountSetupStep";
 
 export default function HRInvitation() {
   const navigate = useNavigate();

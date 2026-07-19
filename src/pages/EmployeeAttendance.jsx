@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+﻿import { Button } from '@/components/ui/button'
 import { Download } from 'lucide-react'
 import { useState } from "react";
 import { Card } from '@/components/ui/card';
@@ -9,9 +9,9 @@ import imgAttend from "../assets/attend.png";
 import imgPlus from "../assets/plus.png";
 import { Badge } from "@/components/ui/badge"
 import { useParams } from 'react-router-dom';
-import { Attendancelog } from '@/components/dashboard/Attendance/Attendancelog';
-import { useEmployeeAttendance } from '@/hooks/useEmployeeAttendance';
-import { FormInput } from '@/shared/forms/FormInput';
+import { Attendancelog } from '@/features/attendance/Attendancelog';
+import { useEmployeeAttendance } from '@/features/employees/hooks/useEmployeeAttendance';
+import { FormInput } from '@/components/shared/forms/FormInput';
 
 const EmployeeAttendance = () => {
     const { id } = useParams();

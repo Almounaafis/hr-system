@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { COLUMN_CONFIG } from "@/components/dashboard/RequestsPage/lib/constants";
-import { RequestColumn } from "@/components/dashboard/RequestsPage/RequestColumn";
-import { RequestDetailSheet } from "@/components/dashboard/RequestsPage/RequestDetailSheet";
+import { COLUMN_CONFIG } from "@/features/requests/lib/constants";
+import { RequestColumn } from "@/features/requests/RequestColumn";
+import { RequestDetailSheet } from "@/features/requests/RequestDetailSheet";
 import {
   RewardCard,
   LeaveCard,
@@ -10,10 +10,10 @@ import {
   SalaryIncreaseCard,
   RemoteWorkCard,
   AdvanceCard,
-} from "@/components/dashboard/RequestsPage/RequestCards";
-import { useRequests, useReviewRequest, useDeleteRequest } from "@/components/dashboard/RequestsPage/hooks/useRequests";
-import { useRequestFilters } from "../components/dashboard/RequestsPage/hooks/useRequestFilters";
-import { RequestsToolbar } from "../components/dashboard/RequestsPage/RequestsToolbar";
+} from "@/features/requests/RequestCards";
+import { useRequests, useReviewRequest, useDeleteRequest } from "@/features/requests/hooks/useRequests";
+import { useRequestFilters } from "@/features/requests/hooks/useRequestFilters";
+import { RequestsToolbar } from "@/features/requests/RequestsToolbar";
 
 export default function Requests() {
   const [selectedRequest, setSelectedRequest] = useState(null);

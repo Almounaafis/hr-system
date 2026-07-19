@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
+﻿import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import useAuthStore from '@/store/useAuthStore';
 import { useCrud } from '@/hooks/useCrud';
-import LoginPhotoPanel from '@/components/dashboard/auth/LoginPhotoPanel';
-import { ResetPasswordHeader } from '@/components/dashboard/auth/ResetPassword/ResetPasswordHeader';
-import { ResetPasswordForm } from '@/components/dashboard/auth/ResetPassword/ResetPasswordForm';
+import LoginPhotoPanel from '@/features/auth/LoginPhotoPanel';
+import { ResetPasswordHeader } from '@/features/auth/ResetPassword/ResetPasswordHeader';
+import { ResetPasswordForm } from '@/features/auth/ResetPassword/ResetPasswordForm';
 
 export default function ResetPassword() {
   const navigate = useNavigate();

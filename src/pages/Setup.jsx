@@ -1,9 +1,9 @@
-import { useNavigate } from 'react-router-dom';
+﻿import { useNavigate } from 'react-router-dom';
 import useAuthStore from '@/store/useAuthStore';
 import { useCrud } from '@/hooks/useCrud';
-import LoginPhotoPanel from '@/components/dashboard/auth/LoginPhotoPanel';
-import { SetupHeader } from '@/components/dashboard/auth/Setup/SetupHeader';
-import { SetupForm } from '@/components/dashboard/auth/Setup/SetupForm';
+import LoginPhotoPanel from '@/features/auth/LoginPhotoPanel';
+import { SetupHeader } from '@/features/auth/Setup/SetupHeader';
+import { SetupForm } from '@/features/auth/Setup/SetupForm';
 
 export default function Setup() {
   const navigate = useNavigate();

@@ -1,24 +1,24 @@
-// ─── Employees.jsx ───────────────────────────────────────────────────────────
+﻿// ─── Employees.jsx ───────────────────────────────────────────────────────────
 import { useState } from "react";
 import { Network, Plus, PlusCircle, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Pagination from "@/shared/components/Pagination";
-import OrgChart from "@/components/dashboard/Employees/OrgChart";
-import { statusFilters } from "@/components/dashboard/Employees/mockData";
-import { TabButton } from "@/components/dashboard/Employees/TabButton";
-import { FilterDropdown } from "@/components/dashboard/Employees/FilterDropdown";
-import { BulkActionsDropdown } from "@/components/dashboard/Employees/BulkActionsDropdown";
-import EmployeesGrid from "@/components/dashboard/Employees/EmployeesGrid";
-import { EmployeeDetailSheet } from "@/components/dashboard/Employees/EmployeeDetailSheet";
-import { AddEmployeeModal } from "@/components/dashboard/Employees/AddEmployeeModal";
-import { CustomScheduleSheet } from "@/components/dashboard/Employees/CustomScheduleSheet";
-import SearchInput from "@/components/dashboard/Employees/SearchInput";
+import Pagination from "@/components/shared/Pagination";
+import OrgChart from "@/features/employees/OrgChart";
+import { statusFilters } from "@/features/employees/mockData";
+import { TabButton } from "@/features/employees/TabButton";
+import { FilterDropdown } from "@/features/employees/FilterDropdown";
+import { BulkActionsDropdown } from "@/features/employees/BulkActionsDropdown";
+import EmployeesGrid from "@/features/employees/EmployeesGrid";
+import { EmployeeDetailSheet } from "@/features/employees/EmployeeDetailSheet";
+import { AddEmployeeModal } from "@/features/employees/AddEmployeeModal";
+import { CustomScheduleSheet } from "@/features/employees/CustomScheduleSheet";
+import SearchInput from "@/features/employees/SearchInput";
  import {
   useEmployeesData,
   useEmployeeFilters,
   useEmployeeActions,
   useEmployeeEditData,
-} from "@/components/dashboard/Employees/hooks/employees.hooks";
+} from "@/features/employees/hooks/employees.hooks";
 import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
 export const SEARCH_DEBOUNCE_MS = 400;
 export const EMPLOYEES_PAGE_SIZE = 6;

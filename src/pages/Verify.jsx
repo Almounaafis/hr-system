@@ -1,11 +1,11 @@
 ﻿import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import LoginPhotoPanel from '@/components/dashboard/auth/LoginPhotoPanel';
+import LoginPhotoPanel from '@/features/auth/LoginPhotoPanel';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '@/store/useAuthStore';
 import { useCrud } from '@/hooks/useCrud';
-import { VerifyHeader } from '@/components/dashboard/auth/Verify/VerifyHeader';
-import { VerifyForm } from '@/components/dashboard/auth/Verify/VerifyForm';
+import { VerifyHeader } from '@/features/auth/Verify/VerifyHeader';
+import { VerifyForm } from '@/features/auth/Verify/VerifyForm';
 import Cookies from 'js-cookie';
 
 const OTP_LENGTH = 6;
