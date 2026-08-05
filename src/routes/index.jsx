@@ -14,6 +14,7 @@ const Attendance = lazy(() => import("../pages/Attendance"));
 const Requests = lazy(() => import("../pages/Requests"));
 const Payroll = lazy(() => import("../pages/Payroll"));
 const Settings = lazy(() => import("../pages/Settings"));
+const Networks = lazy(() => import("../pages/Networks"));
 const Notifications = lazy(() => import("../pages/Notifications"));
 const Profile = lazy(() => import("../pages/Profile"));
 const NotFound = lazy(() => import("../pages/NotFound"));
@@ -73,6 +74,7 @@ export default function AppRoutes() {
             <Route path="requests" element={<Requests />} />
             <Route path="payroll" element={<Payroll />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="networks" element={<Networks />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="profile" element={<Profile />} />
 

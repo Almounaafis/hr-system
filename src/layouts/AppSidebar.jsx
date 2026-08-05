@@ -1,4 +1,4 @@
-﻿// AppSidebar.jsx
+// AppSidebar.jsx
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -10,6 +10,7 @@ import {
   ClipboardList,
   PanelLeftClose,
   PanelLeftOpen,
+  Wifi,
 } from "lucide-react";
 
 import { cn, getInitials } from "@/lib/utils";
@@ -131,6 +132,19 @@ export default function AppSidebar({ isOpen, collapsed, onToggle }) {
               >
                 <Settings className="h-5 w-5 shrink-0" />
                 <span className={cn(collapsed && "lg:hidden")}>الإعدادات</span>
+              </Link>
+
+              <Link
+                to="/networks"
+                onClick={closeOnMobile}
+                title="شبكات الحضور"
+                className={cn(
+                  "flex h-11 items-center gap-3 rounded-xl px-3 text-foreground hover:bg-muted",
+                  collapsed && "lg:justify-center",
+                )}
+              >
+                <Wifi className="h-5 w-5 shrink-0" />
+                <span className={cn(collapsed && "lg:hidden")}>شبكات الحضور</span>
               </Link>
 
               <Link
