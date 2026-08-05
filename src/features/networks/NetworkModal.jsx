@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useForm as useHookForm } from "react-hook-form";
+import { useForm as useHookForm, Controller } from "react-hook-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 
 export default function NetworkModal({ isOpen, onClose, onSave, editingNetwork, branches, isSaving }) {
-  const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useHookForm({
+  const { register, handleSubmit, reset, control, formState: { errors } } = useHookForm({
     defaultValues: {
       ssid: "",
       mac_address: "",
@@ -15,8 +15,6 @@ export default function NetworkModal({ isOpen, onClose, onSave, editingNetwork, 
       description: "",
     }
   });
-
-  const selectedBranch = watch("branch");
 
   useEffect(() => {
     if (isOpen) {
@@ -74,26 +72,29 @@ export default function NetworkModal({ isOpen, onClose, onSave, editingNetwork, 
 
           <div className="space-y-2">
             <label htmlFor="branch" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">الفرع</label>
-            <Select
-              value={selectedBranch}
-              onValueChange={(val) => setValue("branch", val, { shouldValidate: true })}
-            >
-              <SelectTrigger id="branch" className={!selectedBranch ? "text-muted-foreground" : ""}>
-                <SelectValue placeholder="اختر الفرع" />
-              </SelectTrigger>
-              <SelectContent>
-                {branches.map((b) => {
-                   const value = typeof b === 'object' ? b.name : b;
-                   const label = typeof b === 'object' ? b.name : b;
-                   return (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                   );
-                })}
-              </SelectContent>
-            </Select>
-            <input type="hidden" {...register("branch", { required: "الفرع مطلوب" })} />
+            <Controller
+              name="branch"
+              control={control}
+              rules={{ required: "الفرع مطلوب" }}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value || ""}>
+                  <SelectTrigger id="branch" className={!field.value ? "text-muted-foreground" : ""}>
+                    <SelectValue placeholder="اختر الفرع" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {branches.map((b) => {
+                       const value = typeof b === 'object' ? b.name : b;
+                       const label = typeof b === 'object' ? b.name : b;
+                       return (
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
+                       );
+                    })}
+                  </SelectContent>
+                </Select>
+              )}
+            />
             {errors.branch && <p className="text-xs text-destructive">{errors.branch.message}</p>}
           </div>
 

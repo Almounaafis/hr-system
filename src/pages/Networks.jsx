@@ -5,7 +5,7 @@ import { useNetworksData } from "@/features/networks/hooks/useNetworks";
 import NetworkModal from "@/features/networks/NetworkModal";
 
 export default function Networks() {
-  const { networks, branches, isLoading, createItem, updateItem, deleteItem, deleting, creating, updating } = useNetworksData();
+  const { networks, branches, isLoading, createItem, updateItem, deleteItem, creating, updating } = useNetworksData();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingNetwork, setEditingNetwork] = useState(null);
 
@@ -69,8 +69,8 @@ export default function Networks() {
                 <th className="py-3 px-4 font-medium rounded-tr-lg">اسم الشبكة</th>
                 <th className="py-3 px-4 font-medium">الفرع</th>
                 <th className="py-3 px-4 font-medium">عنوان MAC</th>
+                <th className="py-3 px-4 font-medium">وصف الشبكة</th>
                 <th className="py-3 px-4 font-medium">الحالة</th>
-                <th className="py-3 px-4 font-medium">اخر تحديث</th>
                 <th className="py-3 px-4 font-medium rounded-tl-lg">الإجراءات</th>
               </tr>
             </thead>
@@ -111,7 +111,7 @@ export default function Networks() {
                       {network.mac_address || "—"}
                     </td>
                     <td className="py-4 px-4 text-muted-foreground">
-                      {network.last_updated || (network.updated_at ? new Date(network.updated_at).toLocaleDateString("ar-EG") : "اليوم")}
+                      {network.description || "—"}
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-2">

@@ -1,16 +1,22 @@
-﻿import TableShared from "@/components/shared/TableShared";
+import TableShared from "@/components/shared/TableShared";
 import { StatusDropdown } from "@/components/shared/StatusDropdown";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { isLateCheckIn } from "./utils";
 import { cn } from "@/lib/utils";
+import { Wifi, WifiOff } from "lucide-react";
+import { useState } from "react";
+import { RegistrationDetailsDialog } from "./RegistrationDetailsDialog";
 
  
 
 export function AttendanceTable({ data, onStatusChange, isChangingStatus }) {
+  const [selectedDetailsRecord, setSelectedDetailsRecord] = useState(null);
+
   return (
-    <TableShared
-      columns={[
+    <>
+      <TableShared
+        columns={[
         {
           header: "",
           cellClassName: "py-3 px-2 w-8",
@@ -30,7 +36,11 @@ export function AttendanceTable({ data, onStatusChange, isChangingStatus }) {
                 "w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-semibold flex-shrink-0",
                 record.avatarBg, record.avatarColor
               )}>
-                {record.avatar}
+                  {record.photo ? (
+                  <img src={record.photo} alt={record.name} className="w-full h-full object-cover rounded-full " />
+                ) : (
+                  record.avatar
+                )}
               </div>
               <div className="flex flex-col">
                 <span className="text-sm text-gray-800 whitespace-nowrap">{record.name}</span>
@@ -69,6 +79,32 @@ export function AttendanceTable({ data, onStatusChange, isChangingStatus }) {
           accessor: "checkOut"
         },
         {
+          header: "طريقة التسجيل",
+          cellClassName: "py-3 px-2 text-sm text-gray-800 whitespace-nowrap",
+          render: (record) => {
+            const isOffNetwork = record.registrationMethod === "خارج الشبكة";
+            if (!record.registrationMethod || record.registrationMethod === "—") {
+              return <span className="text-gray-400">—</span>;
+            }
+            return (
+              <button
+                onClick={() => {
+                  if (isOffNetwork) setSelectedDetailsRecord(record);
+                }}
+                className={cn(
+                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
+                  isOffNetwork
+                    ? "bg-[#FFF7F0] text-[#C0741F] hover:bg-[#FFEBD6] cursor-pointer"
+                    : "bg-[#ECFDED] text-[#1E9550] cursor-default"
+                )}
+              >
+                <span>{record.registrationMethod}</span>
+                {isOffNetwork ? <WifiOff className="w-4 h-4" /> : <Wifi className="w-4 h-4" />}
+              </button>
+            );
+          }
+        },
+        {
           header: "ساعات العمل",
           cellClassName: "py-3 px-2 text-sm text-gray-600 whitespace-nowrap",
           render: (record) => record.hoursWorked && record.hoursWorked !== "—"
@@ -89,5 +125,11 @@ export function AttendanceTable({ data, onStatusChange, isChangingStatus }) {
       ]}
       data={data}
     />
+    <RegistrationDetailsDialog
+      isOpen={!!selectedDetailsRecord}
+      onClose={() => setSelectedDetailsRecord(null)}
+      record={selectedDetailsRecord}
+    />
+    </>
   );
 }
