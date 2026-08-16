@@ -9,7 +9,7 @@ import { formatJoinDate } from "./utils";
 import { formatDate } from "@/features/requests/lib/helpers";
 import api from "@/lib/axios";
 import { useCrud } from "@/hooks/useCrud";
-import { PayrollDetails } from "../Payroll/PayrollDetails";
+import { PayrollDetails } from "../payroll/PayrollDetails";
 // import toast from "react-hot-toast";
 
 function InfoRow({ icon: Icon, label, value }) {
