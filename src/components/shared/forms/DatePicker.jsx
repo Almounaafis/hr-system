@@ -9,8 +9,19 @@ import { FormLabel } from "@/components/ui/form-field";
 // يحوّل أي قيمة (string / Date / undefined) إلى Date صالح أو null
 function parseValidDate(value) {
   if (!value) return null;
-  const date = value instanceof Date ? value : new Date(value);
-  return isNaN(date.getTime()) ? null : date;
+  if (value instanceof Date) return isNaN(value.getTime()) ? null : value;
+  if (typeof value === "string") {
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (match) {
+      const year = parseInt(match[1], 10);
+      const month = parseInt(match[2], 10) - 1;
+      const day = parseInt(match[3], 10);
+      return new Date(year, month, day);
+    }
+    const date = new Date(value);
+    return isNaN(date.getTime()) ? null : date;
+  }
+  return null;
 }
 
 function formatDisplayDate(value, placeholder) {
@@ -23,7 +34,14 @@ export function DatePicker({ value, onChange, placeholder = "اختر التار
   const validDate = parseValidDate(value);
 
   const handleSelect = (date) => {
-    onChange(date ? date.toISOString().split("T")[0] : "");
+    if (!date) {
+      onChange("");
+    } else {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      onChange(`${year}-${month}-${day}`);
+    }
     setOpen(false);
   };
 

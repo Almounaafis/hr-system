@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { FormField, FormControl, FormLabel } from "@/components/ui/form-field";
@@ -32,8 +32,18 @@ const RECURRENCE_OPTIONS = [
   { value: "monthly", label: "شهري" },
 ];
 
-function getTodayString() {
-  return new Date().toISOString().split('T')[0];
+function formatLocalDate(date) {
+  if (!date || isNaN(date.getTime())) return "";
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getTomorrowString() {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return formatLocalDate(tomorrow);
 }
 
 function EmployeeAvatar({ employee }) {
@@ -101,12 +111,16 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
   const [selectedDays, setSelectedDays] = useState(["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday"]);
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("17:00");
-  const [startDate, setStartDate] = useState(getTodayString());
+  const [startDate, setStartDate] = useState(getTomorrowString());
 
   // Shift-system tab state
   const [selectedShift, setSelectedShift] = useState("");
   const [recurrence, setRecurrence] = useState("fixed");
-  const [shiftStartDate, setShiftStartDate] = useState(getTodayString());
+  const [shiftStartDate, setShiftStartDate] = useState(getTomorrowString());
+
+  // Tracking state to adjust form when props/query change during render
+  const [prevEmployeeId, setPrevEmployeeId] = useState(null);
+  const [prevSchedule, setPrevSchedule] = useState(null);
 
   // Fetch shifts from API
   const { data: shifts, isLoading: loadingShifts } = useShifts();
@@ -125,8 +139,21 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
     useJsonPayload: true,
   });
 
-  // Load current schedule data when sheet opens
-  useEffect(() => {
+  // Sync state during rendering when employee selection or fetched schedule changes
+  const currentEmpId = employeeIds[0] || null;
+  if (currentEmpId !== prevEmployeeId) {
+    setPrevEmployeeId(currentEmpId);
+    setPrevSchedule(null);
+    setScheduleType("fixed");
+    setSelectedDays(["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday"]);
+    setStartTime("09:00");
+    setEndTime("17:00");
+    setStartDate(getTomorrowString());
+    setSelectedShift("");
+    setRecurrence("fixed");
+    setShiftStartDate(getTomorrowString());
+  } else if (currentSchedule !== prevSchedule) {
+    setPrevSchedule(currentSchedule);
     if (currentSchedule && !loadingSchedule) {
       const schedule = currentSchedule?.data?.schedule || currentSchedule?.schedule || currentSchedule?.data || currentSchedule;
       if (schedule && typeof schedule === "object" && !Array.isArray(schedule)) {
@@ -135,7 +162,7 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
         if (typeof schedule.start_time === "string") setStartTime(schedule.start_time.substring(0, 5));
         if (typeof schedule.end_time === "string") setEndTime(schedule.end_time.substring(0, 5));
         if (schedule.effective_from) {
-          const fromDate = typeof schedule.effective_from === "string" ? schedule.effective_from.split('T')[0] : getTodayString();
+          const fromDate = typeof schedule.effective_from === "string" ? schedule.effective_from.split('T')[0] : getTomorrowString();
           setStartDate(fromDate);
           setShiftStartDate(fromDate);
         }
@@ -145,7 +172,7 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
         }
       }
     }
-  }, [currentSchedule, loadingSchedule]);
+  }
 
   const toggleDay = (day) => {
     setSelectedDays((prev) =>
@@ -160,7 +187,7 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
     }
 
     let payload;
-    const today = getTodayString();
+    const tomorrowStr = getTomorrowString();
 
     if (scheduleType === "fixed") {
       if (!startTime || typeof startTime !== "string") {
@@ -171,25 +198,27 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
         toast.error("الرجاء تحديد وقت الانصراف");
         return;
       }
+      const effectiveFrom = startDate || tomorrowStr;
       payload = {
         employee_ids: employeeIds,
         schedule_type: "fixed",
         work_days: selectedDays,
         start_time: startTime,
         end_time: endTime,
-        effective_from: startDate || today,
+        effective_from: effectiveFrom,
       };
     } else if (scheduleType === "shift") {
       if (!selectedShift) {
         toast.error("الرجاء اختيار شيفت");
         return;
       }
+      const effectiveFrom = shiftStartDate || tomorrowStr;
       payload = {
         employee_ids: employeeIds,
         schedule_type: "shift",
         shift_id: selectedShift,
         recurrence_type: recurrence,
-        effective_from: shiftStartDate || today,
+        effective_from: effectiveFrom,
       };
     }
 
@@ -203,7 +232,10 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
       onOpenChange(false);
     } catch (error) {
       console.error("Error assigning schedule:", error);
-      toast.error(error?.response?.data?.message || "حدث خطأ أثناء تطبيق الجدول");
+      const apiErrMessage = error?.response?.data?.errors?.[0]?.message 
+        || error?.response?.data?.message 
+        || "حدث خطأ أثناء تطبيق الجدول";
+      toast.error(apiErrMessage);
     }
   };
 
@@ -291,7 +323,7 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
                 <FormLabel>يبدأ تطبيق الجدول من</FormLabel>
                 <DatePicker
                   value={startDate}
-                  onChange={(val) => setStartDate(typeof val === "string" ? val : val ? val.toISOString().split('T')[0] : "")}
+                  onChange={(val) => setStartDate(typeof val === "string" ? val : formatLocalDate(val))}
                   placeholder="اختر البداية"
                 />
               </FormField>
@@ -348,7 +380,7 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
                 <FormLabel>يبدأ تطبيق الجدول من</FormLabel>
                 <DatePicker
                   value={shiftStartDate}
-                  onChange={(val) => setShiftStartDate(typeof val === "string" ? val : val ? val.toISOString().split('T')[0] : "")}
+                  onChange={(val) => setShiftStartDate(typeof val === "string" ? val : formatLocalDate(val))}
                   placeholder="اختر البداية"
                 />
               </FormField>
