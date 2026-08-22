@@ -63,7 +63,7 @@ const mapFormDataToApi = (formData) => ({
   national_id:      formData.nationalId,
   hire_date:        formData.dateOfAppointment || undefined,
   birth_date:       formData.dateOfBirth || undefined,
-  salary:           formData.salary,
+  salary:           formData.salary !== "" && formData.salary !== undefined && formData.salary !== null && !isNaN(Number(formData.salary)) ? Number(formData.salary) : undefined,
 });
 
 const mapApiToEditForm = (data) => ({

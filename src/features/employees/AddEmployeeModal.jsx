@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Users, Briefcase, Paperclip, FileText, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -285,11 +285,18 @@ setValue('employmentType', editingEmployee.employmentType || editingEmployee.emp
               <FormInput
                 name="salary"
                 label="الراتب"
-                type="text"
+                type="number"
+                min="0"
+                step="any"
                 placeholder="ادخل الراتب"
                 className="px-4 h-12 rounded-xl"
                 error={errors.salary?.message}
                 register={register}
+                rules={{
+                  min: { value: 0, message: "الراتب يجب أن يكون رقماً موجباً" },
+                  valueAsNumber: true,
+                }}
+                onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
               />
               <DatePicker
                 name="dateOfAppointment"
