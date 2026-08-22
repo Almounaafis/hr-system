@@ -1,5 +1,5 @@
 ﻿import { useState, useRef, useMemo } from "react";
-import { Plus, Printer, X, ChevronDown, Check, Loader2, Trash2, Crown } from "lucide-react";
+import { Plus, X, ChevronDown, Check, Loader2, Trash2, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FormField, FormLabel } from "@/components/ui/form-field";
@@ -572,14 +572,14 @@ export default function OrgChart({
     <Card className="rounded-3xl border border-border bg-background p-4 sm:p-6 shadow-sm space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between print:hidden">
         <h2 className="text-lg sm:text-xl font-bold text-foreground">الهيكل التنظيمي</h2>
-        <Button
+        {/* <Button
           variant="outline"
           className="gap-2 rounded-md bg-background px-3 sm:px-4 py-2 h-auto text-xs sm:text-sm font-semibold flex items-center transition-all"
           onClick={() => window.print()}
         >
           <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           <span className="hidden sm:inline">طباعة</span>
-        </Button>
+        </Button> */}
       </div>
 
       {isLoading ? (
