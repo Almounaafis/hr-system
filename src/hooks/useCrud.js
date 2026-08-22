@@ -167,6 +167,18 @@ export function useCrud({
     onSuccess: (response) => {
       if (queryKey) {
         queryClient.invalidateQueries({ queryKey: formattedKey });
+        if (formattedKey.length > 0 && typeof formattedKey[0] === 'string') {
+          const rootKey = formattedKey[0];
+          if (rootKey.startsWith('employee')) {
+            queryClient.invalidateQueries({ queryKey: ['employees'] });
+            queryClient.invalidateQueries({ queryKey: ['employee-detail'] });
+            queryClient.invalidateQueries({ queryKey: ['employee'] });
+          } else {
+            queryClient.invalidateQueries({ queryKey: [rootKey] });
+          }
+        }
+      } else {
+        queryClient.invalidateQueries();
       }
       if (!disableSuccessToast) {
         handleSuccess(response, "تم الإضافة بنجاح", handleCloseModal);
@@ -205,6 +217,18 @@ export function useCrud({
     onSuccess: (response) => {
       if (queryKey) {
         queryClient.invalidateQueries({ queryKey: formattedKey });
+        if (formattedKey.length > 0 && typeof formattedKey[0] === 'string') {
+          const rootKey = formattedKey[0];
+          if (rootKey.startsWith('employee')) {
+            queryClient.invalidateQueries({ queryKey: ['employees'] });
+            queryClient.invalidateQueries({ queryKey: ['employee-detail'] });
+            queryClient.invalidateQueries({ queryKey: ['employee'] });
+          } else {
+            queryClient.invalidateQueries({ queryKey: [rootKey] });
+          }
+        }
+      } else {
+        queryClient.invalidateQueries();
       }
       handleSuccess(response, "تم التحديث بنجاح", handleCloseModal);
       onSuccess?.(response);
@@ -221,6 +245,18 @@ export function useCrud({
     onSuccess: (response) => {
       if (queryKey) {
         queryClient.invalidateQueries({ queryKey: formattedKey });
+        if (formattedKey.length > 0 && typeof formattedKey[0] === 'string') {
+          const rootKey = formattedKey[0];
+          if (rootKey.startsWith('employee')) {
+            queryClient.invalidateQueries({ queryKey: ['employees'] });
+            queryClient.invalidateQueries({ queryKey: ['employee-detail'] });
+            queryClient.invalidateQueries({ queryKey: ['employee'] });
+          } else {
+            queryClient.invalidateQueries({ queryKey: [rootKey] });
+          }
+        }
+      } else {
+        queryClient.invalidateQueries();
       }
       handleSuccess(response, "تم الحذف بنجاح");
     },

@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useCrud } from "@/hooks/useCrud";
 import { PAGE_SIZE } from "@/features/employees/mockData";
 
@@ -20,13 +20,21 @@ export const mapEmployeeFromApi = (emp) => ({
   dateOfBirth:    emp.birth_date      ?? "",
   directManager:  emp.direct_manager  ?? "",
   employmentType: emp.employment_type ?? "",
+  employeeCode:   emp.employee_code   ?? emp.employeeCode ?? emp.id,
 });
 export function useEmployeeEditData(editingId) {
-  const { data, isLoading } = useCrud({
+  const { data, isLoading, refetch } = useCrud({
     queryKey: ["employee-detail", editingId],
     endpoint: editingId ? `/employees/${editingId}` : null,
     enabled: !!editingId,
+    staleTime: 0,
   });
+
+  useEffect(() => {
+    if (editingId) {
+      refetch();
+    }
+  }, [editingId, refetch]);
 
   const editForm = useMemo(() => {
     const actualData = data?.data ?? data;

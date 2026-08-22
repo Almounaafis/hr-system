@@ -1,12 +1,14 @@
-﻿import { GoogleIcon, FacebookIcon } from '@/features/auth/Login/SocialIcons';
+import { GoogleIcon, FacebookIcon } from '@/features/auth/Login/SocialIcons';
 
 export function SocialLogin() {
+  const baseUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || '';
+
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL.replace('/api/', '')}/auth/google`;
+    window.location.href = `${baseUrl}/auth/google`;
   };
 
   const handleFacebookLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL.replace('/api/', '')}/api/auth/facebook`;
+    window.location.href = `${baseUrl}/auth/facebook`;
   };
 
   return (

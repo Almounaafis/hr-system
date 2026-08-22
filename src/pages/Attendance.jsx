@@ -1,4 +1,4 @@
-﻿import { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Pagination from "@/components/shared/Pagination";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AttendanceTable } from "@/features/attendance/AttendanceTable";
@@ -8,7 +8,8 @@ import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
 import { TableToolbar } from "@/features/attendance/TableToolbar";
 import { AttendanceTableSkeleton } from "@/features/attendance/AttendanceTableSkeleton";
 import { mapAttendanceRecord } from "@/features/attendance/utils";
-import { useAttendance } from "@/features/attendance/hooks/useAttendance";
+import { useAttendance, useExportAttendance } from "@/features/attendance/hooks/useAttendance";
+import { SendEmailModal } from "@/features/attendance/SendEmailModal";
 
 export default function Attendance() {
   const today = new Date();
@@ -22,6 +23,7 @@ export default function Attendance() {
 
   const [editingRecord, setEditingRecord] = useState(null);
   const [editForm, setEditForm] = useState({ checkIn: "", checkOut: "", status: "" });
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -37,6 +39,14 @@ export default function Attendance() {
     search: debouncedSearch,
     status,
   });
+
+  const {
+    exportAttendance,
+    sendAttendanceEmail,
+    isExportingPdf,
+    isExportingExcel,
+    isSendingEmail,
+  } = useExportAttendance();
 
   const { changeStatus, isChanging } = useChangeAttendanceStatus();
 
@@ -84,6 +94,18 @@ export default function Attendance() {
     }
   };
 
+  const handleExportExcel = () => {
+    exportAttendance({ month, year, status, format: "excel" });
+  };
+
+  const handleExportPdf = () => {
+    exportAttendance({ month, year, status, format: "pdf" });
+  };
+
+  const handleSendEmailSubmit = async (targetEmail) => {
+    await sendAttendanceEmail({ to: targetEmail, month, year, status });
+  };
+
   return (
     <>
       <Card className="border-border">
@@ -100,6 +122,12 @@ export default function Attendance() {
               onMonthChange={handleMonthChange}
               statusValue={status}
               onStatusChange={handleStatusChange}
+              onExportExcel={handleExportExcel}
+              onExportPdf={handleExportPdf}
+              onSendEmail={() => setIsEmailModalOpen(true)}
+              isExportingExcel={isExportingExcel}
+              isExportingPdf={isExportingPdf}
+              isSendingEmail={isSendingEmail}
               className="w-full sm:w-auto"
             />
           </div>
@@ -141,6 +169,14 @@ export default function Attendance() {
         setEditForm={setEditForm}
         onSave={handleSaveEdit}
         onCancel={handleCancelEdit}
+      />
+
+      <SendEmailModal
+        open={isEmailModalOpen}
+        onOpenChange={setIsEmailModalOpen}
+        title="إرسال سجل الحضور العام"
+        onSend={handleSendEmailSubmit}
+        isLoading={isSendingEmail}
       />
     </>
   );

@@ -1,26 +1,55 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { arSA } from "date-fns/locale";
 import TableShared from "@/components/shared/TableShared";
 import { StatusDropdown } from "@/components/shared/StatusDropdown";
-import { useEmployeeAttendance } from "@/features/employees/hooks/useEmployeeAttendance";
-import { useChangeAttendanceStatus } from "@/features/employees/hooks/useEmployeeAttendance";
+import {
+  useEmployeeAttendance,
+  useChangeAttendanceStatus,
+  useExportEmployeeAttendance,
+} from "@/features/employees/hooks/useEmployeeAttendance";
 import { FormInput } from "@/components/shared/forms/FormInput";
+import { Button } from "@/components/ui/button";
+import { SendEmailModal } from "@/features/attendance/SendEmailModal";
 import { statusLabels, statusOptions } from "@/lib/constants";
+import { FileSpreadsheet, FileText, Mail, Loader2 } from "lucide-react";
 
 function formatDate(value) {
-  if (!value) return "—";
-  return format(parseISO(value), "d MMM yyyy", { locale: arSA });
+  if (!value || value === "—") return "—";
+  try {
+    let d = typeof value === "string" ? parseISO(value) : new Date(value);
+    if (isNaN(d?.getTime?.())) {
+      d = new Date(value);
+    }
+    if (isNaN(d?.getTime?.())) return value;
+    return format(d, "d MMM yyyy", { locale: arSA });
+  } catch  {
+    return value || "—";
+  }
 }
 
 function formatTime(value) {
-  if (!value) return "—";
-  return format(parseISO(value), "HH:mm", { locale: arSA });
+  if (!value || value === "—") return "—";
+  try {
+    if (typeof value === "string" && !value.includes("-") && !value.includes("T")) {
+      return value;
+    }
+    let d = typeof value === "string" ? parseISO(value) : new Date(value);
+    if (isNaN(d?.getTime?.())) {
+      d = new Date(value);
+    }
+    if (isNaN(d?.getTime?.())) return value;
+    return format(d, "HH:mm", { locale: arSA });
+  } catch  {
+    return value || "—";
+  }
 }
 
 export function Attendancelog({ employeeId, month }) {
   const [selectedWeek, setSelectedWeek] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const currentYear = new Date().getFullYear();
 
   const { data: attendanceData, isLoading, isError, refetch } = useEmployeeAttendance(
     employeeId,
@@ -33,6 +62,14 @@ export function Attendancelog({ employeeId, month }) {
 
   const { changeStatus, isChanging } = useChangeAttendanceStatus();
 
+  const {
+    exportEmployeeAttendance,
+    sendEmployeeAttendanceEmail,
+    isExportingPdf,
+    isExportingExcel,
+    isSendingEmail,
+  } = useExportEmployeeAttendance();
+
   const records = attendanceData?.records || [];
 
   const handleStatusChange = async (attendanceId, newStatus) => {
@@ -42,6 +79,18 @@ export function Attendancelog({ employeeId, month }) {
     } catch (error) {
       console.error("Failed to change status:", error);
     }
+  };
+
+  const handleExportExcel = () => {
+    exportEmployeeAttendance({ employeeId, month, year: currentYear, format: "excel" });
+  };
+
+  const handleExportPdf = () => {
+    exportEmployeeAttendance({ employeeId, month, year: currentYear, format: "pdf" });
+  };
+
+  const handleSendEmailSubmit = async (email) => {
+    await sendEmployeeAttendanceEmail({ employeeId, to: email, month, year: currentYear });
   };
 
   const columns = [
@@ -86,9 +135,9 @@ export function Attendancelog({ employeeId, month }) {
 
   return (
     <div className="bg-background rounded-2xl shadow-sm p-6 mt-6" dir="rtl">
-      <div className="flex items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <h2 className="text-lg font-bold text-gray-900">سجل الحضور التفصيلي</h2>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <FormInput
             name="week"
             type="select"
@@ -107,7 +156,7 @@ export function Attendancelog({ employeeId, month }) {
               { value: '5', label: 'الأسبوع الخامس' },
             ]}
             placeholder="اختر الأسبوع"
-            className="min-w-[150px]"
+            className="min-w-[140px]"
           />
           <FormInput
             name="attendance_status"
@@ -123,8 +172,56 @@ export function Attendancelog({ employeeId, month }) {
               ...statusOptions.map(status => ({ value: status, label: statusLabels[status] })),
             ]}
             placeholder="اختر الحالة"
-            className="min-w-[150px]"
+            className="min-w-[140px]"
           />
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleExportExcel}
+            disabled={isExportingExcel}
+            className="h-10 px-3 text-xs font-medium rounded-xl flex items-center gap-1.5 border-border bg-white hover:bg-accent"
+          >
+            {isExportingExcel ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <FileSpreadsheet className="w-3.5 h-3.5 text-green-600" />
+            )}
+            <span>Excel</span>
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleExportPdf}
+            disabled={isExportingPdf}
+            className="h-10 px-3 text-xs font-medium rounded-xl flex items-center gap-1.5 border-border bg-white hover:bg-accent"
+          >
+            {isExportingPdf ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <FileText className="w-3.5 h-3.5 text-red-500" />
+            )}
+            <span>PDF</span>
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setIsEmailModalOpen(true)}
+            disabled={isSendingEmail}
+            className="h-10 px-3 text-xs font-medium rounded-xl flex items-center gap-1.5 border-border bg-white hover:bg-accent text-foreground"
+          >
+            {isSendingEmail ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Mail className="w-3.5 h-3.5 text-primary" />
+            )}
+            <span>إرسال إيميل</span>
+          </Button>
         </div>
       </div>
 
@@ -137,6 +234,14 @@ export function Attendancelog({ employeeId, month }) {
       ) : (
         <TableShared columns={columns} data={records} />
       )}
+
+      <SendEmailModal
+        open={isEmailModalOpen}
+        onOpenChange={setIsEmailModalOpen}
+        title="إرسال سجل حضور الموظف"
+        onSend={handleSendEmailSubmit}
+        isLoading={isSendingEmail}
+      />
     </div>
   );
 }

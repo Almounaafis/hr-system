@@ -15,7 +15,6 @@ export const branches = [
 export const statusFilters = [
   { value: "all", label: "الكل" },
   { value: "active", label: "نشط" },
-  { value: "on-leave", label: "في إجازة" },
   { value: "inactive", label: "غير نشط" },
 ];
  

@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { useCrud } from "@/hooks/useCrud";
+import api from "@/lib/axios";
+import toast from "react-hot-toast";
 
 /**
  * Hook to fetch employee attendance data with filtering
@@ -74,5 +77,72 @@ export function useChangeAttendanceStatus() {
   return {
     changeStatus,
     isChanging: crud.updating,
+  };
+}
+
+/**
+ * Hook to export single employee attendance (PDF, Excel) and send to email
+ */
+export function useExportEmployeeAttendance() {
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [isExportingExcel, setIsExportingExcel] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+
+  const exportEmployeeAttendance = async ({ employeeId, month, year, format }) => {
+    try {
+      format === 'pdf' ? setIsExportingPdf(true) : setIsExportingExcel(true);
+      const params = {};
+      if (month) params.month = String(month);
+      if (year) params.year = String(year);
+      if (format) params.format = String(format);
+
+      const response = await api.get(`/attendance/employee/${employeeId}/export`, {
+        params,
+        responseType: 'blob',
+      });
+
+      const ext = format === 'excel' ? 'xlsx' : 'pdf';
+      const filename = `employee_attendance_${month || 'all'}_${year || ''}.${ext}`;
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast.success('تم تصدير سجل حضور الموظف بنجاح');
+    } catch (error) {
+      console.error('Error exporting employee attendance:', error);
+      toast.error('حدث خطأ أثناء تصدير سجل حضور الموظف');
+    } finally {
+      format === 'pdf' ? setIsExportingPdf(false) : setIsExportingExcel(false);
+    }
+  };
+
+  const sendEmployeeAttendanceEmail = async ({ employeeId, to, month, year }) => {
+    try {
+      setIsSendingEmail(true);
+      const params = { to };
+      if (month) params.month = String(month);
+      if (year) params.year = String(year);
+
+      await api.post(`/attendance/employee/${employeeId}/email`, null, { params });
+      toast.success('تم إرسال سجل حضور الموظف إلى البريد الإلكتروني بنجاح');
+    } catch (error) {
+      console.error('Error sending employee attendance email:', error);
+      toast.error('حدث خطأ أثناء إرسال البريد الإلكتروني');
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
+  return {
+    exportEmployeeAttendance,
+    sendEmployeeAttendanceEmail,
+    isExportingPdf,
+    isExportingExcel,
+    isSendingEmail,
   };
 }

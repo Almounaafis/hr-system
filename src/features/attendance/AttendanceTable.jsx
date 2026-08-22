@@ -1,3 +1,5 @@
+import { format, parseISO } from "date-fns";
+import { arSA } from "date-fns/locale";
 import TableShared from "@/components/shared/TableShared";
 import { StatusDropdown } from "@/components/shared/StatusDropdown";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +10,19 @@ import { ChevronLeft, Wifi, WifiOff } from "lucide-react";
 import { useState } from "react";
 import { RegistrationDetailsDialog } from "./RegistrationDetailsDialog";
 
-
+function formatDate(value) {
+  if (!value || value === "—") return "—";
+  try {
+    let d = typeof value === "string" ? parseISO(value) : new Date(value);
+    if (isNaN(d?.getTime?.())) {
+      d = new Date(value);
+    }
+    if (isNaN(d?.getTime?.())) return value;
+    return format(d, "d MMM yyyy", { locale: arSA });
+  } catch {
+    return value || "—";
+  }
+}
 
 export function AttendanceTable({ data, onStatusChange, isChangingStatus }) {
   const [selectedDetailsRecord, setSelectedDetailsRecord] = useState(null);
@@ -57,6 +71,11 @@ export function AttendanceTable({ data, onStatusChange, isChangingStatus }) {
                 {record.department}
               </Badge>
             )
+          },
+          {
+            header: "التاريخ",
+            cellClassName: "py-3 px-2 text-sm text-gray-700 whitespace-nowrap",
+            render: (record) => formatDate(record.date),
           },
           {
             header: "الحضور",

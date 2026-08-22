@@ -26,6 +26,7 @@ export function formatJoinDate(dateValue) {
 // separate "employee code" field in the data model, so this is generated
 // rather than invented per-record.
 export function formatEmployeeId(id) {
+  if (!id || id === "undefined" || id === "null") return "—";
   return `#EH${id}`;
 }
 

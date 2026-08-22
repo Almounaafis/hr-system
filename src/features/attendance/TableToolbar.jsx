@@ -1,7 +1,8 @@
-﻿import { memo } from "react";
-import { Search } from "lucide-react";
+import { memo } from "react";
+import { Search, FileSpreadsheet, FileText, Mail, Loader2 } from "lucide-react";
 import { FormField, FormControl } from "@/components/ui/form-field";
 import FormInput from "@/components/shared/forms/FormInput";
+import { Button } from "@/components/ui/button";
 import { MONTH_OPTIONS } from "@/lib/constants";
 
 export const TableToolbar = memo(function TableToolbar({
@@ -11,6 +12,12 @@ export const TableToolbar = memo(function TableToolbar({
   onMonthChange,
   statusValue,
   onStatusChange,
+  onExportExcel,
+  onExportPdf,
+  onSendEmail,
+  isExportingExcel,
+  isExportingPdf,
+  isSendingEmail,
 }) {
   return (
     <div className="flex items-center gap-2 flex-wrap">
@@ -55,6 +62,60 @@ export const TableToolbar = memo(function TableToolbar({
         placeholder="كل الحالات"
         className="min-w-[150px]"
       />
+
+      {onExportExcel && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onExportExcel}
+          disabled={isExportingExcel}
+          className="h-10 px-3 text-xs font-medium rounded-xl flex items-center gap-1.5 border-border bg-white hover:bg-accent"
+        >
+          {isExportingExcel ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <FileSpreadsheet className="w-3.5 h-3.5 text-green-600" />
+          )}
+          <span>Excel</span>
+        </Button>
+      )}
+
+      {onExportPdf && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onExportPdf}
+          disabled={isExportingPdf}
+          className="h-10 px-3 text-xs font-medium rounded-xl flex items-center gap-1.5 border-border bg-white hover:bg-accent"
+        >
+          {isExportingPdf ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <FileText className="w-3.5 h-3.5 text-red-500" />
+          )}
+          <span>PDF</span>
+        </Button>
+      )}
+
+      {onSendEmail && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onSendEmail}
+          disabled={isSendingEmail}
+          className="h-10 px-3 text-xs font-medium rounded-xl flex items-center gap-1.5 border-border bg-white hover:bg-accent text-foreground"
+        >
+          {isSendingEmail ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <Mail className="w-3.5 h-3.5 text-primary" />
+          )}
+          <span>إرسال إيميل</span>
+        </Button>
+      )}
     </div>
   );
 });

@@ -1,14 +1,15 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { FormField, FormControl, FormLabel } from "@/components/ui/form-field";
-import { Calendar, RefreshCw, User } from "lucide-react";
+import { Calendar, RefreshCw, User, Loader2 } from "lucide-react";
 import PillGroup from "@/components/shared/PillGroup";
 import MultiPillGroup from "@/components/shared/MultiPillGroup";
 import { DatePicker } from "@/components/shared/forms/DatePicker";
 import { cn } from "@/lib/utils";
 import { useCrud } from "@/hooks/useCrud";
 import { useShifts } from "@/features/settings/hooks/useShifts";
+import toast from "react-hot-toast";
 
 const SCHEDULE_TYPE_OPTIONS = [
   { value: "fixed", label: "ساعات ثابتة" },
@@ -25,12 +26,15 @@ const DAY_OPTIONS = [
   { value: "friday", label: "الجمعة" },
 ];
 
-
 const RECURRENCE_OPTIONS = [
   { value: "fixed", label: "ثابت" },
   { value: "weekly", label: "اسبوعي" },
   { value: "monthly", label: "شهري" },
 ];
+
+function getTodayString() {
+  return new Date().toISOString().split('T')[0];
+}
 
 function EmployeeAvatar({ employee }) {
   const [imgError, setImgError] = useState(false);
@@ -83,7 +87,6 @@ function ShiftOptionCard({ option, selected, onSelect }) {
           <p className="text-sm text-muted-foreground pt-2">{option.time}</p>
         </div>
       </div>
-     
     </button>
   );
 }
@@ -98,12 +101,12 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
   const [selectedDays, setSelectedDays] = useState(["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday"]);
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("17:00");
-  const [startDate, setStartDate] = useState("");
+  const [startDate, setStartDate] = useState(getTodayString());
 
   // Shift-system tab state
   const [selectedShift, setSelectedShift] = useState("");
   const [recurrence, setRecurrence] = useState("fixed");
-  const [shiftStartDate, setShiftStartDate] = useState("");
+  const [shiftStartDate, setShiftStartDate] = useState(getTodayString());
 
   // Fetch shifts from API
   const { data: shifts, isLoading: loadingShifts } = useShifts();
@@ -116,32 +119,33 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
   });
 
   // Assign schedule API
-  const { createItem: assignSchedule, isCreating: assigning } = useCrud({
+  const { createItem: assignSchedule, creating: assigning } = useCrud({
     endpoint: '/schedules/assign',
     enabled: false,
     useJsonPayload: true,
   });
 
   // Load current schedule data when sheet opens
-  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (currentSchedule && !loadingSchedule) {
       const schedule = currentSchedule?.data?.schedule || currentSchedule?.schedule || currentSchedule?.data || currentSchedule;
-      if (schedule) {
-        setScheduleType(schedule.schedule_type || "fixed");
-        setSelectedDays(schedule.work_days || []);
-        setStartTime(schedule.start_time?.substring(0, 5) || "09:00");
-        setEndTime(schedule.end_time?.substring(0, 5) || "17:00");
-        setStartDate(schedule.effective_from || "");
+      if (schedule && typeof schedule === "object" && !Array.isArray(schedule)) {
+        if (schedule.schedule_type) setScheduleType(schedule.schedule_type);
+        if (Array.isArray(schedule.work_days)) setSelectedDays(schedule.work_days);
+        if (typeof schedule.start_time === "string") setStartTime(schedule.start_time.substring(0, 5));
+        if (typeof schedule.end_time === "string") setEndTime(schedule.end_time.substring(0, 5));
+        if (schedule.effective_from) {
+          const fromDate = typeof schedule.effective_from === "string" ? schedule.effective_from.split('T')[0] : getTodayString();
+          setStartDate(fromDate);
+          setShiftStartDate(fromDate);
+        }
         if (schedule.schedule_type === "shift" && schedule.shift_id) {
           setSelectedShift(schedule.shift_id);
-          setRecurrence(schedule.recurrence_type || "fixed");
-          setShiftStartDate(schedule.effective_from || "");
+          if (schedule.recurrence_type) setRecurrence(schedule.recurrence_type);
         }
       }
     }
   }, [currentSchedule, loadingSchedule]);
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   const toggleDay = (day) => {
     setSelectedDays((prev) =>
@@ -151,24 +155,33 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
 
   const handleSave = async () => {
     if (employeeIds.length === 0) {
-      alert("الرجاء اختيار موظف واحد على الأقل");
+      toast.error("الرجاء اختيار موظف واحد على الأقل");
       return;
     }
 
     let payload;
+    const today = getTodayString();
 
     if (scheduleType === "fixed") {
+      if (!startTime || typeof startTime !== "string") {
+        toast.error("الرجاء تحديد وقت الحضور");
+        return;
+      }
+      if (!endTime || typeof endTime !== "string") {
+        toast.error("الرجاء تحديد وقت الانصراف");
+        return;
+      }
       payload = {
         employee_ids: employeeIds,
         schedule_type: "fixed",
         work_days: selectedDays,
         start_time: startTime,
         end_time: endTime,
-        effective_from: startDate || new Date().toISOString().split('T')[0],
+        effective_from: startDate || today,
       };
     } else if (scheduleType === "shift") {
       if (!selectedShift) {
-        alert("الرجاء اختيار شيفت");
+        toast.error("الرجاء اختيار شيفت");
         return;
       }
       payload = {
@@ -176,7 +189,7 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
         schedule_type: "shift",
         shift_id: selectedShift,
         recurrence_type: recurrence,
-        effective_from: shiftStartDate || new Date().toISOString().split('T')[0],
+        effective_from: shiftStartDate || today,
       };
     }
 
@@ -186,10 +199,11 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
         method: "post",
         useJsonPayload: true,
       });
-      alert("تم تطبيق الجدول بنجاح");
+      toast.success("تم تطبيق الجدول بنجاح");
       onOpenChange(false);
-    } catch {
-      alert("حدث خطأ أثناء تطبيق الجدول");
+    } catch (error) {
+      console.error("Error assigning schedule:", error);
+      toast.error(error?.response?.data?.message || "حدث خطأ أثناء تطبيق الجدول");
     }
   };
 
@@ -209,7 +223,6 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
         {selectedIds.size > 0 && (
           <div className="mb-6 p-4 bg-[#EDF8FC] rounded-lg">
             <div className="flex items-start justify-between gap-4">
-             
               <div className="flex -space-x-3 space-x-reverse">
                 {selectedEmployees.slice(0, 3).map((employee) => (
                   <EmployeeAvatar key={employee.id} employee={employee} />
@@ -220,7 +233,7 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
                   </div>
                 )}
               </div>
-               <div>
+              <div>
                 <p className="text-sm text-primary mb-1">{selectedIds.size} موظفين محددين</p>
                 <p className="text-lg font-semibold text-primary">سيتم تطبيق هذا الجدول علي جميع الموظفيين المحددين فور الحفظ</p>
               </div>
@@ -257,7 +270,7 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
                 <FormControl
                   type="time"
                   value={startTime}
-                  onChange={setStartTime}
+                  onChange={(e) => setStartTime(typeof e === "string" ? e : e?.target?.value || "")}
                   className="h-10 text-sm"
                 />
               </FormField>
@@ -266,7 +279,7 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
                 <FormControl
                   type="time"
                   value={endTime}
-                  onChange={setEndTime}
+                  onChange={(e) => setEndTime(typeof e === "string" ? e : e?.target?.value || "")}
                   className="h-10 text-sm"
                 />
               </FormField>
@@ -278,7 +291,7 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
                 <FormLabel>يبدأ تطبيق الجدول من</FormLabel>
                 <DatePicker
                   value={startDate}
-                  onChange={setStartDate}
+                  onChange={(val) => setStartDate(typeof val === "string" ? val : val ? val.toISOString().split('T')[0] : "")}
                   placeholder="اختر البداية"
                 />
               </FormField>
@@ -335,7 +348,7 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
                 <FormLabel>يبدأ تطبيق الجدول من</FormLabel>
                 <DatePicker
                   value={shiftStartDate}
-                  onChange={setShiftStartDate}
+                  onChange={(val) => setShiftStartDate(typeof val === "string" ? val : val ? val.toISOString().split('T')[0] : "")}
                   placeholder="اختر البداية"
                 />
               </FormField>
@@ -350,7 +363,14 @@ export function CustomScheduleSheet({ open, onOpenChange, selectedIds, employees
             onClick={handleSave}
             disabled={assigning}
           >
-            {assigning ? "جاري التطبيق..." : "تطبيق الجدول"}
+            {assigning ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                جاري التطبيق...
+              </>
+            ) : (
+              "تطبيق الجدول"
+            )}
           </Button>
           <Button
             variant="outline"
