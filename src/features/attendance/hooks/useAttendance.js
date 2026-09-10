@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useCrud } from '@/hooks/useCrud';
+import logger from '@/lib/logger';
 import api from '@/lib/axios';
 import toast from 'react-hot-toast';
 
@@ -18,7 +19,7 @@ export function useAttendance(filters = {}) {
   const endpoint = `/attendance${queryString ? `?${queryString}` : ''}`;
 
   const crud = useCrud({
-    queryKey: ["attendance", filters],
+    queryKey: ['attendance', filters],
     endpoint,
     enabled: true,
     staleTime: 300000,
@@ -68,7 +69,7 @@ export function useExportAttendance() {
 
       toast.success('تم تصدير تقرير الحضور بنجاح');
     } catch (error) {
-      console.error('Error exporting attendance:', error);
+      logger.error('Error exporting attendance:', error);
       toast.error('حدث خطأ أثناء تصدير ملف الحضور');
     } finally {
       format === 'pdf' ? setIsExportingPdf(false) : setIsExportingExcel(false);
@@ -86,7 +87,7 @@ export function useExportAttendance() {
       await api.post('/attendance/email', null, { params });
       toast.success('تم إرسال سجل الحضور إلى البريد الإلكتروني بنجاح');
     } catch (error) {
-      console.error('Error sending attendance email:', error);
+      logger.error('Error sending attendance email:', error);
       toast.error('حدث خطأ أثناء إرسال البريد الإلكتروني');
     } finally {
       setIsSendingEmail(false);

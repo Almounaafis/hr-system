@@ -1,10 +1,10 @@
-﻿import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useCrud } from "@/hooks/useCrud";
-import Stepper from "@/features/auth/HrInvitation/Stepper";
-import InvitationStep from "@/features/auth/HrInvitation/InvitationStep";
-import AccountSetupStep from "@/features/auth/HrInvitation/AccountSetupStep";
+import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useCrud } from '@/hooks/useCrud';
+import Stepper from '@/features/auth/HrInvitation/Stepper';
+import InvitationStep from '@/features/auth/HrInvitation/InvitationStep';
+import AccountSetupStep from '@/features/auth/HrInvitation/AccountSetupStep';
 
 export default function HRInvitation() {
   const navigate = useNavigate();
@@ -23,10 +23,10 @@ export default function HRInvitation() {
   }
 
   const [currentStep, setCurrentStep] = useState(1);
-  const companyName = "المنافس";
+  const companyName = 'المنافس';
   const steps = [
-    { number: 1, label: "دعوة", description: "قبول الدعوة" },
-    { number: 2, label: "الحساب", description: "إعداد الحساب" }
+    { number: 1, label: 'دعوة', description: 'قبول الدعوة' },
+    { number: 2, label: 'الحساب', description: 'إعداد الحساب' },
   ];
 
   const handleAcceptInvitation = () => {
@@ -46,14 +46,10 @@ export default function HRInvitation() {
 
       {/* Enhanced Card */}
       <Card className="bg-card rounded-2xl max-w-[709px] w-full shadow-lg border border-border/50 backdrop-blur-sm mx-auto">
-
         <CardContent className="px-4 sm:px-6 md:px-10 py-6 sm:py-8 md:py-10">
           {/* Step 1: Invitation */}
           {currentStep === 1 && (
-            <InvitationStep
-              companyName={companyName}
-              onAccept={handleAcceptInvitation}
-            />
+            <InvitationStep companyName={companyName} onAccept={handleAcceptInvitation} />
           )}
 
           {/* Step 2: Account Setup */}

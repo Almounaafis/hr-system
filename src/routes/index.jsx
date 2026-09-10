@@ -1,29 +1,31 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { lazy, Suspense } from "react";
-import Cookies from "js-cookie";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import Cookies from 'js-cookie';
 
-import DashboardLayout from "../layouts/DashboardLayout";
-import useAuthStore from "../store/useAuthStore";
-import EmployeeAttendance from "@/pages/EmployeeAttendance";
+import DashboardLayout from '../layouts/DashboardLayout';
+import useAuthStore from '../store/useAuthStore';
+import EmployeeAttendance from '@/pages/EmployeeAttendance';
 
-// Lazy Pages
-const Login = lazy(() => import("../pages/Login"));
-const Dashboard = lazy(() => import("../pages/Dashboard"));
-const Employees = lazy(() => import("../pages/Employees"));
-const Attendance = lazy(() => import("../pages/Attendance"));
-const Requests = lazy(() => import("../pages/Requests"));
-const Payroll = lazy(() => import("../pages/Payroll"));
-const Settings = lazy(() => import("../pages/Settings"));
-const Networks = lazy(() => import("../pages/Networks"));
-const Notifications = lazy(() => import("../pages/Notifications"));
-const Profile = lazy(() => import("../pages/Profile"));
-const NotFound = lazy(() => import("../pages/NotFound"));
-const Register = lazy(() => import("../pages/Register"));
-const Verify = lazy(() => import("../pages/Verify"));
-const Setup = lazy(() => import("../pages/Setup"));
-const HRInvitation = lazy(() => import("../pages/HRInvitation"));
-const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
-const ResetPassword = lazy(() => import("../pages/ResetPassword"));
+// Lazy Pages - Auth Pages
+const Login = lazy(() => import('@/features/auth/pages/Login'));
+const Register = lazy(() => import('@/features/auth/pages/Register'));
+const Verify = lazy(() => import('@/features/auth/pages/Verify'));
+const Setup = lazy(() => import('@/features/auth/pages/Setup'));
+const ForgotPassword = lazy(() => import('@/features/auth/pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('@/features/auth/pages/ResetPassword'));
+const HRInvitation = lazy(() => import('@/features/auth/pages/HRInvitation'));
+
+// Lazy Pages - Dashboard Pages
+const Dashboard = lazy(() => import('../pages/Dashboard'));
+const Employees = lazy(() => import('../pages/Employees'));
+const Attendance = lazy(() => import('../pages/Attendance'));
+const Requests = lazy(() => import('../pages/Requests'));
+const Payroll = lazy(() => import('../pages/Payroll'));
+const Settings = lazy(() => import('../pages/Settings'));
+const Networks = lazy(() => import('../pages/Networks'));
+const Notifications = lazy(() => import('../pages/Notifications'));
+const Profile = lazy(() => import('../pages/Profile'));
+const NotFound = lazy(() => import('../pages/NotFound'));
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -77,7 +79,6 @@ export default function AppRoutes() {
             <Route path="networks" element={<Networks />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="profile" element={<Profile />} />
-
           </Route>
 
           <Route path="*" element={<NotFound />} />

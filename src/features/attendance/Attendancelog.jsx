@@ -1,64 +1,67 @@
-import { useState } from "react";
-import { format, parseISO } from "date-fns";
-import { arSA } from "date-fns/locale";
-import TableShared from "@/components/shared/TableShared";
-import { StatusDropdown } from "@/components/shared/StatusDropdown";
+import { useState } from 'react';
+import { format, parseISO } from 'date-fns';
+import logger from '@/lib/logger';
+import { arSA } from 'date-fns/locale';
+import TableShared from '@/components/shared/TableShared';
+import { StatusDropdown } from '@/components/shared/StatusDropdown';
 import {
   useEmployeeAttendance,
   useChangeAttendanceStatus,
   useExportEmployeeAttendance,
-} from "@/features/employees/hooks/useEmployeeAttendance";
-import { FormInput } from "@/components/shared/forms/FormInput";
-import { Button } from "@/components/ui/button";
-import { SendEmailModal } from "@/features/attendance/SendEmailModal";
-import { statusLabels, statusOptions } from "@/lib/constants";
-import { FileSpreadsheet, FileText, Mail, Loader2 } from "lucide-react";
+} from '@/features/employees/hooks/useEmployeeAttendance';
+import { FormInput } from '@/components/shared/forms/FormInput';
+import { Button } from '@/components/ui/button';
+import { SendEmailModal } from '@/features/attendance/SendEmailModal';
+import { statusLabels, statusOptions } from '@/lib/constants';
+import { FileSpreadsheet, FileText, Mail, Loader2 } from 'lucide-react';
 
 function formatDate(value) {
-  if (!value || value === "—") return "—";
+  if (!value || value === '—') return '—';
   try {
-    let d = typeof value === "string" ? parseISO(value) : new Date(value);
+    let d = typeof value === 'string' ? parseISO(value) : new Date(value);
     if (isNaN(d?.getTime?.())) {
       d = new Date(value);
     }
     if (isNaN(d?.getTime?.())) return value;
-    return format(d, "d MMM yyyy", { locale: arSA });
-  } catch  {
-    return value || "—";
+    return format(d, 'd MMM yyyy', { locale: arSA });
+  } catch {
+    return value || '—';
   }
 }
 
 function formatTime(value) {
-  if (!value || value === "—") return "—";
+  if (!value || value === '—') return '—';
   try {
-    if (typeof value === "string" && !value.includes("-") && !value.includes("T")) {
+    if (typeof value === 'string' && !value.includes('-') && !value.includes('T')) {
       return value;
     }
-    let d = typeof value === "string" ? parseISO(value) : new Date(value);
+    let d = typeof value === 'string' ? parseISO(value) : new Date(value);
     if (isNaN(d?.getTime?.())) {
       d = new Date(value);
     }
     if (isNaN(d?.getTime?.())) return value;
-    return format(d, "HH:mm", { locale: arSA });
-  } catch  {
-    return value || "—";
+    return format(d, 'HH:mm', { locale: arSA });
+  } catch {
+    return value || '—';
   }
 }
 
 export function Attendancelog({ employeeId, month }) {
-  const [selectedWeek, setSelectedWeek] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedWeek, setSelectedWeek] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const currentYear = new Date().getFullYear();
 
-  const { data: attendanceData, isLoading, isError, refetch } = useEmployeeAttendance(
-    employeeId,
-    {
-      month,
-      week: selectedWeek || undefined,
-      status: selectedStatus || undefined
-    }
-  );
+  const {
+    data: attendanceData,
+    isLoading,
+    isError,
+    refetch,
+  } = useEmployeeAttendance(employeeId, {
+    month,
+    week: selectedWeek || undefined,
+    status: selectedStatus || undefined,
+  });
 
   const { changeStatus, isChanging } = useChangeAttendanceStatus();
 
@@ -77,16 +80,16 @@ export function Attendancelog({ employeeId, month }) {
       await changeStatus(attendanceId, newStatus);
       refetch();
     } catch (error) {
-      console.error("Failed to change status:", error);
+      logger.error('Failed to change status:', error);
     }
   };
 
   const handleExportExcel = () => {
-    exportEmployeeAttendance({ employeeId, month, year: currentYear, format: "excel" });
+    exportEmployeeAttendance({ employeeId, month, year: currentYear, format: 'excel' });
   };
 
   const handleExportPdf = () => {
-    exportEmployeeAttendance({ employeeId, month, year: currentYear, format: "pdf" });
+    exportEmployeeAttendance({ employeeId, month, year: currentYear, format: 'pdf' });
   };
 
   const handleSendEmailSubmit = async (email) => {
@@ -95,27 +98,27 @@ export function Attendancelog({ employeeId, month }) {
 
   const columns = [
     {
-      header: "التاريخ",
-      cellClassName: "text-sm text-gray-700 font-medium",
+      header: 'التاريخ',
+      cellClassName: 'text-sm text-gray-700 font-medium',
       render: (row) => formatDate(row.attendance_date),
     },
     {
-      header: "وقت الحضور",
-      cellClassName: "text-sm text-gray-700 font-medium",
+      header: 'وقت الحضور',
+      cellClassName: 'text-sm text-gray-700 font-medium',
       render: (row) => formatTime(row.clock_in),
     },
     {
-      header: "وقت الانصراف",
-      cellClassName: "text-sm text-gray-700 font-medium",
+      header: 'وقت الانصراف',
+      cellClassName: 'text-sm text-gray-700 font-medium',
       render: (row) => formatTime(row.clock_out),
     },
     {
-      header: "ساعات العمل",
-      cellClassName: "text-sm text-gray-700 font-medium",
-      render: (row) => row.work_hours || "—",
+      header: 'ساعات العمل',
+      cellClassName: 'text-sm text-gray-700 font-medium',
+      render: (row) => row.work_hours || '—',
     },
     {
-      header: "الحالة",
+      header: 'الحالة',
       render: (row) => (
         <div className="flex items-center gap-2">
           <StatusDropdown
@@ -127,8 +130,8 @@ export function Attendancelog({ employeeId, month }) {
       ),
     },
     {
-      header: "تأخير (دقيقة)",
-      cellClassName: "text-sm text-gray-700 font-medium",
+      header: 'تأخير (دقيقة)',
+      cellClassName: 'text-sm text-gray-700 font-medium',
       render: (row) => row.late_minutes || 0,
     },
   ];
@@ -169,7 +172,7 @@ export function Attendancelog({ employeeId, month }) {
             }}
             options={[
               { value: 'all', label: 'كل الحالات' },
-              ...statusOptions.map(status => ({ value: status, label: statusLabels[status] })),
+              ...statusOptions.map((status) => ({ value: status, label: statusLabels[status] })),
             ]}
             placeholder="اختر الحالة"
             className="min-w-[140px]"

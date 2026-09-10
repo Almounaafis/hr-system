@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
-import { COLUMN_CONFIG } from "@/features/requests/lib/constants";
-import { RequestColumn } from "@/features/requests/RequestColumn";
-import { RequestDetailSheet } from "@/features/requests/RequestDetailSheet";
+import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
+import logger from '@/lib/logger';
+import { COLUMN_CONFIG } from '@/features/requests/lib/constants';
+import { RequestColumn } from '@/features/requests/RequestColumn';
+import { RequestDetailSheet } from '@/features/requests/RequestDetailSheet';
 import {
   RewardCard,
   LeaveCard,
@@ -10,22 +11,31 @@ import {
   SalaryIncreaseCard,
   RemoteWorkCard,
   AdvanceCard,
-} from "@/features/requests/RequestCards";
-import { useRequests, useReviewRequest, useDeleteRequest } from "@/features/requests/hooks/useRequests";
-import { useRequestFilters } from "@/features/requests/hooks/useRequestFilters";
-import { RequestsToolbar } from "@/features/requests/RequestsToolbar";
+} from '@/features/requests/RequestCards';
+import {
+  useRequests,
+  useReviewRequest,
+  useDeleteRequest,
+} from '@/features/requests/hooks/useRequests';
+import { useRequestFilters } from '@/features/requests/hooks/useRequestFilters';
+import { RequestsToolbar } from '@/features/requests/RequestsToolbar';
 
 export default function Requests() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [selectedRequestKind, setSelectedRequestKind] = useState(null);
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
 
   const {
-    searchQuery, setSearchQuery,
-    filterStatus, setFilterStatus,
-    filterDepartment, setFilterDepartment,
-    filterType, setFilterType,
-    filterDate, setFilterDate,
+    searchQuery,
+    setSearchQuery,
+    filterStatus,
+    setFilterStatus,
+    filterDepartment,
+    setFilterDepartment,
+    filterType,
+    setFilterType,
+    filterDate,
+    setFilterDate,
   } = useRequestFilters();
 
   // Debounce search query
@@ -37,12 +47,16 @@ export default function Requests() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const { data: requestsData, isLoading, refetch } = useRequests({
+  const {
+    data: requestsData,
+    isLoading,
+    refetch,
+  } = useRequests({
     search: debouncedSearchQuery || undefined,
-    request_type: filterType === "all" ? undefined : filterType,
-    status: filterStatus === "all" ? undefined : filterStatus || undefined,
-    department: filterDepartment === "all" ? undefined : filterDepartment || undefined,
-    date: filterDate === "all" ? undefined : filterDate || undefined,
+    request_type: filterType === 'all' ? undefined : filterType,
+    status: filterStatus === 'all' ? undefined : filterStatus || undefined,
+    department: filterDepartment === 'all' ? undefined : filterDepartment || undefined,
+    date: filterDate === 'all' ? undefined : filterDate || undefined,
   });
 
   const { reviewRequest } = useReviewRequest();
@@ -54,7 +68,7 @@ export default function Requests() {
       await refetch();
       setSelectedRequest(null);
     } catch (error) {
-      console.error("Failed to approve request:", error);
+      logger.error('Failed to approve request:', error);
     }
   };
 
@@ -64,7 +78,7 @@ export default function Requests() {
       await refetch();
       setSelectedRequest(null);
     } catch (error) {
-      console.error("Failed to reject request:", error);
+      logger.error('Failed to reject request:', error);
     }
   };
 
@@ -74,7 +88,7 @@ export default function Requests() {
       await refetch();
       setSelectedRequest(null);
     } catch (error) {
-      console.error("Failed to delete request:", error);
+      logger.error('Failed to delete request:', error);
     }
   };
 
@@ -83,38 +97,73 @@ export default function Requests() {
     setSelectedRequestKind(kind);
   };
 
-
   const requests = requestsData?.requests || [];
 
   // Group requests by type
-  const filteredReward = filterType === "all" || filterType === "bonus" ? requests.filter(r => r.request_type === "bonus") : [];
-  const filteredLeave = filterType === "all" || filterType === "vacation" ? requests.filter(r => r.request_type === "vacation") : [];
-  const filteredPermission = filterType === "all" || filterType === "permission" ? requests.filter(r => r.request_type === "permission") : [];
-  const filteredSalaryIncrease = filterType === "all" || filterType === "salary_increase" ? requests.filter(r => r.request_type === "salary_increase") : [];
-  const filteredRemoteWork = filterType === "all" || filterType === "remote_work" ? requests.filter(r => r.request_type === "remote_work") : [];
-  const filteredAdvance = filterType === "all" || filterType === "advance" ? requests.filter(r => r.request_type === "advance") : [];
+  const filteredReward =
+    filterType === 'all' || filterType === 'bonus'
+      ? requests.filter((r) => r.request_type === 'bonus')
+      : [];
+  const filteredLeave =
+    filterType === 'all' || filterType === 'vacation'
+      ? requests.filter((r) => r.request_type === 'vacation')
+      : [];
+  const filteredPermission =
+    filterType === 'all' || filterType === 'permission'
+      ? requests.filter((r) => r.request_type === 'permission')
+      : [];
+  const filteredSalaryIncrease =
+    filterType === 'all' || filterType === 'salary_increase'
+      ? requests.filter((r) => r.request_type === 'salary_increase')
+      : [];
+  const filteredRemoteWork =
+    filterType === 'all' || filterType === 'remote_work'
+      ? requests.filter((r) => r.request_type === 'remote_work')
+      : [];
+  const filteredAdvance =
+    filterType === 'all' || filterType === 'advance'
+      ? requests.filter((r) => r.request_type === 'advance')
+      : [];
 
   const allDepartments = Array.from(new Set(requests.map((r) => r.employee?.department)));
 
   const columns = [
-    { config: COLUMN_CONFIG.reward, data: filteredReward, kind: "reward", Card: RewardCard },
-    { config: COLUMN_CONFIG.leave, data: filteredLeave, kind: "leave", Card: LeaveCard },
-    { config: COLUMN_CONFIG.permission, data: filteredPermission, kind: "permission", Card: PermissionCard },
-    { config: COLUMN_CONFIG.salaryIncrease, data: filteredSalaryIncrease, kind: "salaryIncrease", Card: SalaryIncreaseCard },
-    { config: COLUMN_CONFIG.remoteWork, data: filteredRemoteWork, kind: "remoteWork", Card: RemoteWorkCard },
-    { config: COLUMN_CONFIG.advance, data: filteredAdvance, kind: "advance", Card: AdvanceCard },
+    { config: COLUMN_CONFIG.reward, data: filteredReward, kind: 'reward', Card: RewardCard },
+    { config: COLUMN_CONFIG.leave, data: filteredLeave, kind: 'leave', Card: LeaveCard },
+    {
+      config: COLUMN_CONFIG.permission,
+      data: filteredPermission,
+      kind: 'permission',
+      Card: PermissionCard,
+    },
+    {
+      config: COLUMN_CONFIG.salaryIncrease,
+      data: filteredSalaryIncrease,
+      kind: 'salaryIncrease',
+      Card: SalaryIncreaseCard,
+    },
+    {
+      config: COLUMN_CONFIG.remoteWork,
+      data: filteredRemoteWork,
+      kind: 'remoteWork',
+      Card: RemoteWorkCard,
+    },
+    { config: COLUMN_CONFIG.advance, data: filteredAdvance, kind: 'advance', Card: AdvanceCard },
   ].filter((col) => col.data.length > 0);
-
-
 
   return (
     <Card className="space-y-6 p-4 sm:p-6 overflow-hidden">
       <RequestsToolbar
-        searchQuery={searchQuery} setSearchQuery={setSearchQuery}
-        filterDate={filterDate} setFilterDate={setFilterDate}
-        filterType={filterType} setFilterType={setFilterType}
-        filterDepartment={filterDepartment} setFilterDepartment={setFilterDepartment}
-        filterStatus={filterStatus} setFilterStatus={setFilterStatus}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        filterDate={filterDate}
+        setFilterDate={setFilterDate}
+        filterType={filterType}
+        setFilterType={setFilterType}
+        filterDepartment={filterDepartment}
+        setFilterDepartment={setFilterDepartment}
+        filterStatus={filterStatus}
+        setFilterStatus={setFilterStatus}
         allDepartments={allDepartments}
       />
 

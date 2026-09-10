@@ -1,16 +1,236 @@
-# React + Vite
+# نظام بصمة - نظام إدارة الموارد البشرية
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+نظام متكامل لإدارة الموارد البشرية والشركات، يوفر أدوات شاملة لإدارة الموظفين، الحضور، الرواتب، الطلبات، والإعدادات.
 
-Currently, two official plugins are available:
+## 🚀 المميزات
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### إدارة الموظفين
+- إضافة وتعديل وحذف الموظفين
+- عرض تفاصيل الموظفين الكاملة
+- إدارة جداول العمل المخصصة
+- تصدير سجلات الحضور الفردية
 
-## React Compiler
+### إدارة الحضور
+- تسجيل الحضور والانصراف
+- عرض سجلات الحضور الشهرية
+- تغيير حالة الحضور
+- تصدير التقارير (Excel, PDF)
+- إرسال سجلات الحضور عبر البريد الإلكتروني
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### نظام الرواتب
+- إنشاء كشوف الرواتب الشهرية
+- إدارة الزيادات والخصومات
+- تحديث الرواتب الأساسية
+- تصدير تقارير الرواتب
 
-## Expanding the ESLint configuration
+### إدارة الطلبات
+- طلبات الإجازات
+- طلبات الإذونات
+- طلبات العمل عن بعد
+- طلبات السلف
+- طلبات زيادة الراتب
+- الموافقة والرفض على الطلبات
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### إعدادات النظام
+- إعدادات دورة الرواتب
+- إعدادات الموقع الجغرافي
+- إعدادات ساعات العمل
+- إدارة الورديات (Shifts)
+- إعدادات سياسات الخصومات
+- إعدادات رصيد الإجازات
+
+## 🛠️ التقنيات المستخدمة
+
+### Frontend
+- **React 19** - مكتبة واجهة المستخدم
+- **Vite 8** - أداة بناء سريعة
+- **React Router** - إدارة التوجيه
+- **TanStack Query** - إدارة البيانات والتخزين المؤقت
+- **React Hook Form** - إدارة النماذج
+- **TailwindCSS** - تنسيق CSS
+- **shadcn/ui** - مكتبة مكونات UI
+- **Lucide Icons** - أيقونات
+- **Recharts** - رسوم بيانية
+
+### أدوات التطوير
+- **ESLint** - فحص جودة الكود
+- **Prettier** - تنسيق الكود
+- **Husky** - Git hooks
+- **lint-staged** - فحص الملفات المعدلة قبل الالتزام
+
+## 📁 هيكل المشروع
+
+```
+src/
+├── components/          # المكونات المشتركة
+│   ├── ui/             # مكونات shadcn/ui
+│   └── shared/         # مكونات مشتركة مخصصة
+├── features/           # ميزات التطبيق
+│   ├── auth/           # المصادقة
+│   ├── attendance/     # الحضور
+│   ├── employees/      # الموظفين
+│   ├── payroll/        # الرواتب
+│   ├── requests/       # الطلبات
+│   ├── settings/       # الإعدادات
+│   └── notifications/  # الإشعارات
+├── hooks/              # React Hooks مخصصة
+├── lib/                # دوال ومكتبات مساعدة
+│   ├── logger.js       # نظام التسجيل
+│   ├── formHelpers.js  # دوال مساعدة للنماذج
+│   ├── errorHandlers.js # معالجة الأخطاء
+│   └── axios.js        # إعدادات API
+├── pages/              # صفحات التطبيق الرئيسية
+├── layouts/            # تخطيطات الصفحات
+├── store/              # إدارة الحالة (Zustand)
+└── routes/             # إعدادات التوجيه
+```
+
+## 🚦 البدء
+
+### المتطلبات
+- Node.js 18+
+- npm أو yarn
+
+### التثبيت
+
+```bash
+# استنساخ المشروع
+git clone <repository-url>
+cd hr-system
+
+# تثبيت المكتبات
+npm install
+
+# تشغيل بيئة التطوير
+npm run dev
+
+# بناء للإنتاج
+npm run build
+
+# معاينة بناء الإنتاج
+npm run preview
+```
+
+### المتغيرات البيئية
+
+أنشئ ملف `.env` في جذر المشروع:
+
+```env
+VITE_API_BASE_URL=https://your-api-url.com
+VITE_FACEBOOK_APP_ID=your-facebook-app-id
+VITE_GOOGLE_CLIENT_ID=your-google-client-id
+```
+
+## 📜 السكريبتات المتاحة
+
+```bash
+# تشغيل خادم التطوير
+npm run dev
+
+# بناء للإنتاج
+npm run build
+
+# معاينة بناء الإنتاج
+npm run preview
+
+# فحص الكود بـ ESLint
+npm run lint
+
+# إصلاح مشاكل ESLint تلقائياً
+npm run lint:fix
+
+# تنسيق الكود بـ Prettier
+npm run format
+
+# فحص التنسيق
+npm run format:check
+```
+
+## 🧪 فحص الجودة
+
+يستخدم المشروع **ESLint** و **Prettier** لضمان جودة الكود:
+
+- **ESLint**: فحص الأخطاء وتنبيهات الكود
+- **Prettier**: تنسيق الكود تلقائياً
+- **Husky**: Git hooks لتشغيل الفحوصات قبل الالتزام
+- **lint-staged**: فحص الملفات المعدلة فقط
+
+## 🎨 معايير الكود
+
+### تسمية المتغيرات
+- استخدم أسماء واضحة وموصوفة
+- استخدم `camelCase` للمتغيرات والدوال
+- استخدم `PascalCase` للمكونات
+
+### مثال:
+```javascript
+// ❌ سيء
+const d = new Date();
+const x = 5;
+
+// ✅ جيد
+const currentDate = new Date();
+const maxRetries = 5;
+```
+
+### التعليقات
+- أضف تعليقات للدوال المعقدة
+- استخدم JSDoc للتوثيق
+- اشرح السبب وراء القرارات المعقدة
+
+### مثال:
+```javascript
+/**
+ * معالج الأخطاء الموحد
+ * @param {Error} error - كائن الخطأ
+ */
+export function handleError(error) {
+  // ...
+}
+```
+
+## 🔧 التطوير
+
+### إضافة صفحة جديدة
+1. أنشئ الملف في `src/pages/`
+2. أضف المسار في `src/routes/index.jsx`
+3. استخدم `lazy loading` للأداء
+
+### إضافة مكون UI جديد
+1. استخدم مكونات shadcn/ui كأساس
+2. ضع المكون في `src/components/ui/` أو `src/components/shared/`
+3. اتبع معايير التصميم الحالية
+
+### إضافة Hook جديد
+1. ضع الـ Hook في `src/hooks/` أو في مجلد الميزة المناسب
+2. استخدم `use` كـ بادئة
+3. أضف تعليقات JSDoc
+
+## 📝 التحديثات الأخيرة
+
+### تحسينات Clean Code
+- ✅ إعداد ESLint و Prettier
+- ✅ إزالة console statements واستبدالها بنظام logging منظم
+- ✅ تقسيم الملفات الكبيرة (useCrud.js)
+- ✅ إزالة الكود المكرر واستخراج المكونات المشتركة
+- ✅ تنظيم هيكل المجلدات والملفات
+- ✅ تحسين تسمية المتغيرات والدوال
+- ✅ تحسين الأداء باستخدام useCallback و useMemo
+- ✅ إضافة تعليقات وتوثيق شامل
+
+## 🤝 المساهمة
+
+1. Fork المشروع
+2. أنشئ branch للميزة الجديدة (`git checkout -b feature/AmazingFeature`)
+3. Commit التغييرات (`git commit -m 'Add some AmazingFeature'`)
+4. Push إلى Branch (`git push origin feature/AmazingFeature`)
+5. افتح Pull Request
+
+## 📄 الترخيص
+
+هذا المشروع مرخص تحت [MIT License](LICENSE)
+
+## 📞 الدعم
+
+للدعم والاستفسارات، تواصل مع فريق التطوير.
+

@@ -1,11 +1,13 @@
-import { useState } from "react";
-import { Plus, Wifi, Pencil, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useNetworksData } from "@/features/networks/hooks/useNetworks";
-import NetworkModal from "@/features/networks/NetworkModal";
+import { useState } from 'react';
+import { Plus, Wifi, Pencil, Trash2 } from 'lucide-react';
+import logger from '@/lib/logger';
+import { Button } from '@/components/ui/button';
+import { useNetworksData } from '@/features/networks/hooks/useNetworks';
+import NetworkModal from '@/features/networks/NetworkModal';
 
 export default function Networks() {
-  const { networks, branches, isLoading, createItem, updateItem, deleteItem, creating, updating } = useNetworksData();
+  const { networks, branches, isLoading, createItem, updateItem, deleteItem, creating, updating } =
+    useNetworksData();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingNetwork, setEditingNetwork] = useState(null);
 
@@ -20,7 +22,7 @@ export default function Networks() {
   };
 
   const handleDeleteClick = async (id) => {
-    if (window.confirm("هل أنت متأكد من حذف هذه الشبكة؟")) {
+    if (window.confirm('هل أنت متأكد من حذف هذه الشبكة؟')) {
       await deleteItem(`/networks/${id}`);
     }
   };
@@ -28,13 +30,19 @@ export default function Networks() {
   const handleSave = async (data) => {
     try {
       if (editingNetwork) {
-        await updateItem({ endpoint: `/networks`, id: editingNetwork.id, body: data, method: "patch", useJsonPayload: true });
+        await updateItem({
+          endpoint: `/networks`,
+          id: editingNetwork.id,
+          body: data,
+          method: 'patch',
+          useJsonPayload: true,
+        });
       } else {
-        await createItem({ endpoint: "/networks", body: data, useJsonPayload: true });
+        await createItem({ endpoint: '/networks', body: data, useJsonPayload: true });
       }
       setIsModalOpen(false);
     } catch (error) {
-      console.error("Error saving network", error);
+      logger.error('Error saving network', error);
     }
   };
 
@@ -99,7 +107,7 @@ export default function Networks() {
                       </div>
                     </td>
                     <td className="py-4 px-4 text-muted-foreground">
-                      {network.branch?.name || network.branch || "—"}
+                      {network.branch?.name || network.branch || '—'}
                     </td>
                     <td className="py-4 px-4">
                       <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-600 border border-emerald-200">
@@ -108,10 +116,10 @@ export default function Networks() {
                       </div>
                     </td>
                     <td className="py-4 px-4 text-muted-foreground">
-                      {network.mac_address || "—"}
+                      {network.mac_address || '—'}
                     </td>
                     <td className="py-4 px-4 text-muted-foreground">
-                      {network.description || "—"}
+                      {network.description || '—'}
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-2">

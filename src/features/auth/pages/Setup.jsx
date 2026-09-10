@@ -1,5 +1,6 @@
-﻿import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import useAuthStore from '@/store/useAuthStore';
+import logger from '@/lib/logger';
 import { useCrud } from '@/hooks/useCrud';
 import LoginPhotoPanel from '@/features/auth/LoginPhotoPanel';
 import { SetupHeader } from '@/features/auth/Setup/SetupHeader';
@@ -26,7 +27,7 @@ export default function Setup() {
     }
     const userId = user._id || user.id;
     if (!userId) {
-      console.error('No user ID found in user object');
+      logger.error('No user ID found in user object');
       navigate('/login');
       return;
     }

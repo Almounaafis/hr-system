@@ -1,42 +1,41 @@
-﻿import { MapPin, Navigation, Loader2 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import FormInput from "@/components/shared/forms/FormInput";
-import { SectionHeader } from "./SectionHeader";
-import { ToggleRow } from "./ToggleRow";
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import { useFormContext } from "react-hook-form";
+﻿import { MapPin, Navigation, Loader2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import FormInput from '@/components/shared/forms/FormInput';
+import { SectionHeader } from './SectionHeader';
+import { ToggleRow } from './ToggleRow';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import { useFormContext } from 'react-hook-form';
 
 // Fix default marker icon paths (Leaflet + bundlers issue)
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
 export function LocationSettingsTab() {
   const { register, watch, setValue } = useFormContext();
   const [isMapOpen, setIsMapOpen] = useState(false);
 
-  const locationName = watch("locationSettings.locationName");
-  const radius = watch("locationSettings.radius");
-  const latitude = watch("locationSettings.latitude");
-  const longitude = watch("locationSettings.longitude");
-  const verificationEnabled = watch("locationSettings.verificationEnabled");
-  const blockOutsideRadius = watch("locationSettings.blockOutsideRadius");
+  const locationName = watch('locationSettings.locationName');
+  const latitude = watch('locationSettings.latitude');
+  const longitude = watch('locationSettings.longitude');
+  const verificationEnabled = watch('locationSettings.verificationEnabled');
+  const blockOutsideRadius = watch('locationSettings.blockOutsideRadius');
 
   const handleOpenMap = () => {
     setIsMapOpen(true);
   };
 
   const handleSelectLocation = (lat, lng) => {
-    setValue("locationSettings.latitude", lat.toString());
-    setValue("locationSettings.longitude", lng.toString());
+    setValue('locationSettings.latitude', lat.toString());
+    setValue('locationSettings.longitude', lng.toString());
     setIsMapOpen(false);
   };
 
@@ -64,25 +63,27 @@ export function LocationSettingsTab() {
             <div className="relative">
               <input
                 type="number"
-                {...register("locationSettings.radius", { valueAsNumber: true })}
+                {...register('locationSettings.radius', { valueAsNumber: true })}
                 className="w-full px-3 py-2 border border-border rounded-md bg-background pl-12"
                 max={1000}
               />
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base text-muted-foreground">متر</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base text-muted-foreground">
+                متر
+              </span>
             </div>
           </div>
         </div>
-       
+
         <div className="divide-y divide-gray-100">
           <ToggleRow
             label="تفعيل التحقق من الموقع"
             checked={verificationEnabled}
-            onCheckedChange={(v) => setValue("locationSettings.verificationEnabled", v)}
+            onCheckedChange={(v) => setValue('locationSettings.verificationEnabled', v)}
           />
           <ToggleRow
             label="منع التسجيل خارج النطاق المحدد"
             checked={blockOutsideRadius}
-            onCheckedChange={(v) => setValue("locationSettings.blockOutsideRadius", v)}
+            onCheckedChange={(v) => setValue('locationSettings.blockOutsideRadius', v)}
           />
         </div>
 
@@ -234,9 +235,7 @@ function MapPickerDialog({ open, onOpenChange, onSelectLocation, currentLat, cur
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               إلغاء
             </Button>
-            <Button onClick={handleConfirm}>
-              تأكيد الموقع
-            </Button>
+            <Button onClick={handleConfirm}>تأكيد الموقع</Button>
           </div>
         </div>
       </DialogContent>

@@ -1,43 +1,44 @@
-import { useState, useMemo } from "react";
-import Pagination from "@/components/shared/Pagination";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AttendanceTable } from "@/features/attendance/AttendanceTable";
-import { EditAttendanceSheet } from "@/features/attendance/EditAttendanceSheet";
-import { useChangeAttendanceStatus } from "@/features/employees/hooks/useEmployeeAttendance";
-import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
-import { TableToolbar } from "@/features/attendance/TableToolbar";
-import { AttendanceTableSkeleton } from "@/features/attendance/AttendanceTableSkeleton";
-import { mapAttendanceRecord } from "@/features/attendance/utils";
-import { useAttendance, useExportAttendance } from "@/features/attendance/hooks/useAttendance";
-import { SendEmailModal } from "@/features/attendance/SendEmailModal";
+import { useState, useMemo, useCallback } from 'react';
+import Pagination from '@/components/shared/Pagination';
+import logger from '@/lib/logger';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AttendanceTable } from '@/features/attendance/AttendanceTable';
+import { EditAttendanceSheet } from '@/features/attendance/EditAttendanceSheet';
+import { useChangeAttendanceStatus } from '@/features/employees/hooks/useEmployeeAttendance';
+import { useDebouncedCallback } from '@/hooks/useDebouncedCallback';
+import { TableToolbar } from '@/features/attendance/TableToolbar';
+import { AttendanceTableSkeleton } from '@/features/attendance/AttendanceTableSkeleton';
+import { mapAttendanceRecord } from '@/features/attendance/utils';
+import { useAttendance, useExportAttendance } from '@/features/attendance/hooks/useAttendance';
+import { SendEmailModal } from '@/features/attendance/SendEmailModal';
 
 export default function Attendance() {
   const today = new Date();
 
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [limit] = useState(10);
-  const [year] = useState(today.getFullYear());
-  const [month, setMonth] = useState(today.getMonth() + 1);
-  const [status, setStatus] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [selectedYear] = useState(today.getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(today.getMonth() + 1);
+  const [selectedStatus, setSelectedStatus] = useState('');
 
   const [editingRecord, setEditingRecord] = useState(null);
-  const [editForm, setEditForm] = useState({ checkIn: "", checkOut: "", status: "" });
+  const [editForm, setEditForm] = useState({ checkIn: '', checkOut: '', status: '' });
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
 
-  const [debouncedSetSearch] = useDebouncedCallback((value) => {
-    setDebouncedSearch(value);
+  const handleDebouncedSearch = useDebouncedCallback((value) => {
+    setDebouncedSearchQuery(value);
   }, 400);
 
   const { data, isLoading, isError, error, refetch } = useAttendance({
-    year,
-    month,
-    page,
-    limit,
-    search: debouncedSearch,
-    status,
+    year: selectedYear,
+    month: selectedMonth,
+    page: currentPage,
+    limit: pageSize,
+    search: debouncedSearchQuery,
+    status: selectedStatus,
   });
 
   const {
@@ -50,61 +51,90 @@ export default function Attendance() {
 
   const { changeStatus, isChanging } = useChangeAttendanceStatus();
 
-  const rawRecords = data?.records ?? [];
   const total = data?.total ?? 0;
-  const totalPages = Math.max(1, Math.ceil(total / limit));
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   // mapping فقط (من غير ترتيب)
   const records = useMemo(() => {
+    const rawRecords = data?.records ?? [];
     return rawRecords.map(mapAttendanceRecord);
-  }, [rawRecords]);
+  }, [data?.records]);
 
-  const handleMonthChange = (value) => {
-    setMonth(Number(value));
-    setPage(1);
-  };
+  const handleMonthChange = useCallback(
+    (value) => {
+      setSelectedMonth(Number(value));
+      setCurrentPage(1);
+    },
+    [setSelectedMonth, setCurrentPage]
+  );
 
-  const handleSearchChange = (value) => {
-    setSearch(value);
-    setPage(1);
-    debouncedSetSearch(value);
-  };
+  const handleSearchChange = useCallback(
+    (value) => {
+      setSearchQuery(value);
+      setCurrentPage(1);
+      handleDebouncedSearch(value);
+    },
+    [setSearchQuery, setCurrentPage, handleDebouncedSearch]
+  );
 
-  const handleStatusChange = (value) => {
-    setStatus(value);
-    setPage(1);
-  };
+  const handleStatusChange = useCallback(
+    (value) => {
+      setSelectedStatus(value);
+      setCurrentPage(1);
+    },
+    [setSelectedStatus, setCurrentPage]
+  );
 
-
-  const handleSaveEdit = () => {
+  const handleSaveEdit = useCallback(() => {
     setEditingRecord(null);
-  };
+  }, [setEditingRecord]);
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = useCallback(() => {
     setEditingRecord(null);
-    setEditForm({ checkIn: "", checkOut: "", status: "" });
-  };
+    setEditForm({ checkIn: '', checkOut: '', status: '' });
+  }, [setEditingRecord, setEditForm]);
 
-  const handleAttendanceStatusChange = async (attendanceId, newStatus) => {
-    try {
-      await changeStatus(attendanceId, newStatus);
-      await refetch();
-    } catch (error) {
-      console.error("Failed to change status:", error);
-    }
-  };
+  const handleAttendanceStatusChange = useCallback(
+    async (attendanceId, newStatus) => {
+      try {
+        await changeStatus(attendanceId, newStatus);
+        await refetch();
+      } catch (error) {
+        logger.error('Failed to change status:', error);
+      }
+    },
+    [changeStatus, refetch]
+  );
 
-  const handleExportExcel = () => {
-    exportAttendance({ month, year, status, format: "excel" });
-  };
+  const handleExportExcel = useCallback(() => {
+    exportAttendance({
+      month: selectedMonth,
+      year: selectedYear,
+      status: selectedStatus,
+      format: 'excel',
+    });
+  }, [exportAttendance, selectedMonth, selectedYear, selectedStatus]);
 
-  const handleExportPdf = () => {
-    exportAttendance({ month, year, status, format: "pdf" });
-  };
+  const handleExportPdf = useCallback(() => {
+    exportAttendance({
+      month: selectedMonth,
+      year: selectedYear,
+      status: selectedStatus,
+      format: 'pdf',
+    });
+  }, [exportAttendance, selectedMonth, selectedYear, selectedStatus]);
 
-  const handleSendEmailSubmit = async (targetEmail) => {
-    await sendAttendanceEmail({ to: targetEmail, month, year, status });
-  };
+  const handleSendEmailSubmit = useCallback(
+    async (targetEmail) => {
+      await sendAttendanceEmail({
+        to: targetEmail,
+        month: selectedMonth,
+        year: selectedYear,
+        status: selectedStatus,
+      });
+    },
+    [sendAttendanceEmail, selectedMonth, selectedYear, selectedStatus]
+  );
 
   return (
     <>
@@ -116,11 +146,11 @@ export default function Attendance() {
 
           <div className="w-full sm:w-auto">
             <TableToolbar
-              searchValue={search}
+              searchValue={searchQuery}
               onSearchChange={handleSearchChange}
-              monthValue={month}
+              monthValue={selectedMonth}
               onMonthChange={handleMonthChange}
-              statusValue={status}
+              statusValue={selectedStatus}
               onStatusChange={handleStatusChange}
               onExportExcel={handleExportExcel}
               onExportPdf={handleExportPdf}
@@ -141,7 +171,7 @@ export default function Attendance() {
           )}
 
           {isLoading ? (
-            <AttendanceTableSkeleton rows={limit} />
+            <AttendanceTableSkeleton rows={pageSize} />
           ) : records.length === 0 ? (
             <div className="text-sm text-muted-foreground py-8 text-center">
               لا توجد بيانات حضور مطابقة
@@ -154,9 +184,9 @@ export default function Attendance() {
             />
           )}
           <Pagination
-            currentPage={page}
+            currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={setPage}
+            onPageChange={setCurrentPage}
           />
         </CardContent>
       </Card>
