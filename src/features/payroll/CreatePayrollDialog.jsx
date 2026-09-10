@@ -1,18 +1,30 @@
-﻿import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import FormInput from "@/components/shared/forms/FormInput";
-import { Info } from "lucide-react";
-import { useGeneratePayroll } from "@/features/payroll/hooks/usePayroll";
-import { useMemo, useState } from "react";
-import toast from "react-hot-toast";
-import { useCrud } from "@/hooks/useCrud";
-import { MONTH_OPTIONS } from "@/lib/constants";
-
+﻿import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import logger from '@/lib/logger';
+import FormInput from '@/components/shared/forms/FormInput';
+import { Info } from 'lucide-react';
+import { useGeneratePayroll } from '@/features/payroll/hooks/usePayroll';
+import { useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
+import { useCrud } from '@/hooks/useCrud';
+import { MONTH_OPTIONS } from '@/lib/constants';
 
 export function CreatePayrollDialog({ open, onOpenChange }) {
   const { generatePayroll, isGenerating } = useGeneratePayroll();
-  const { data: departments = [], isLoading: isLoadingDepartments } = useCrud({ queryKey: "departments", endpoint: "/departments" });
-  const { data: branches = [], isLoading: isLoadingBranches } = useCrud({ queryKey: "branches", endpoint: "/branches" });
+  const { data: departments = [], isLoading: isLoadingDepartments } = useCrud({
+    queryKey: 'departments',
+    endpoint: '/departments',
+  });
+  const { data: branches = [], isLoading: isLoadingBranches } = useCrud({
+    queryKey: 'branches',
+    endpoint: '/branches',
+  });
 
   // Dynamic years: current year and previous 3 years
   const yearOptions = useMemo(() => {
@@ -31,13 +43,17 @@ export function CreatePayrollDialog({ open, onOpenChange }) {
     return MONTH_OPTIONS.slice(0, currentMonth);
   }, []);
 
-  const [selectedMonth, setSelectedMonth] = useState(monthOptions[monthOptions.length - 1]?.value || 7);
-  const [selectedYear, setSelectedYear] = useState(yearOptions[0]?.value || new Date().getFullYear());
-  const [selectedDepartment, setSelectedDepartment] = useState("all");
-  const [selectedBranch, setSelectedBranch] = useState("all");
+  const [selectedMonth, setSelectedMonth] = useState(
+    monthOptions[monthOptions.length - 1]?.value || 7
+  );
+  const [selectedYear, setSelectedYear] = useState(
+    yearOptions[0]?.value || new Date().getFullYear()
+  );
+  const [selectedDepartment, setSelectedDepartment] = useState('all');
+  const [selectedBranch, setSelectedBranch] = useState('all');
   const handleSubmit = async () => {
     if (!selectedMonth || !selectedYear) {
-      toast.error("يرجى اختيار الشهر والسنة");
+      toast.error('يرجى اختيار الشهر والسنة');
       return;
     }
 
@@ -47,7 +63,7 @@ export function CreatePayrollDialog({ open, onOpenChange }) {
     };
 
     // Only add department if not "all" (optional field)
-    if (selectedDepartment && selectedDepartment !== "all") {
+    if (selectedDepartment && selectedDepartment !== 'all') {
       payload.department = selectedDepartment;
     }
 
@@ -55,7 +71,7 @@ export function CreatePayrollDialog({ open, onOpenChange }) {
       await generatePayroll(payload);
       onOpenChange(false);
     } catch (error) {
-      console.error("Failed to generate payroll:", error);
+      logger.error('Failed to generate payroll:', error);
     }
   };
 
@@ -119,7 +135,9 @@ export function CreatePayrollDialog({ open, onOpenChange }) {
 
           <div className="flex items-start gap-2 p-2 md:p-3 bg-blue-50 rounded-md  md:rounded-lg">
             <Info className=" h-3 md:h-5  w-3 md:w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-            <p className="text-[10px] md:text-sm text-blue-700">سيتم تطبيق نظام الخصومات المحدد في اعدادات الرواتب</p>
+            <p className="text-[10px] md:text-sm text-blue-700">
+              سيتم تطبيق نظام الخصومات المحدد في اعدادات الرواتب
+            </p>
           </div>
         </div>
         <DialogFooter className="gap-2">
@@ -128,7 +146,7 @@ export function CreatePayrollDialog({ open, onOpenChange }) {
             onClick={handleSubmit}
             disabled={isGenerating}
           >
-            {isGenerating ? "جاري الإنشاء..." : "إنشاء"}
+            {isGenerating ? 'جاري الإنشاء...' : 'إنشاء'}
           </Button>
           <Button
             variant="outline"

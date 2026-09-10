@@ -1,15 +1,26 @@
-﻿import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+﻿import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import logger from '@/lib/logger';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import {
-  Edit, Trash2, X, Users, Phone, Mail, Calendar,
-  MapPin, Briefcase, FileText, Loader2, Download
-} from "lucide-react";
-import { formatJoinDate } from "./utils";
-import { formatDate } from "@/features/requests/lib/helpers";
-import api from "@/lib/axios";
-import { useCrud } from "@/hooks/useCrud";
-import { PayrollDetails } from "../payroll/PayrollDetails";
+  Edit,
+  Trash2,
+  X,
+  Users,
+  Phone,
+  Mail,
+  Calendar,
+  MapPin,
+  Briefcase,
+  FileText,
+  Loader2,
+  Download,
+} from 'lucide-react';
+import { formatJoinDate } from './utils';
+import { formatDate } from '@/features/requests/lib/helpers';
+import api from '@/lib/axios';
+import { useCrud } from '@/hooks/useCrud';
+import { PayrollDetails } from '../payroll/PayrollDetails';
 // import toast from "react-hot-toast";
 
 function InfoRow({ icon: Icon, label, value }) {
@@ -44,23 +55,20 @@ function DocumentDownloadButton({ empId, doc }) {
   const handleDownload = async () => {
     setDownloading(true);
     try {
-      const response = await api.get(
-        `/employees/${empId}/documents/${doc.id}/download`,
-        {
-          responseType: 'blob',
-        }
-      );
+      const response = await api.get(`/employees/${empId}/documents/${doc.id}/download`, {
+        responseType: 'blob',
+      });
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = url;
-      link.setAttribute("download", doc.file_name || "document");
+      link.setAttribute('download', doc.file_name || 'document');
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Failed to download document:", error);
+      logger.error('Failed to download document:', error);
       // toast.error("حدث خطأ أثناء تحميل الملف");
     } finally {
       setDownloading(false);
@@ -87,7 +95,7 @@ function DocumentDownloadButton({ empId, doc }) {
 // ── Delete document button ────────────────────────────────────────────────────
 function DocumentDeleteButton({ empId, doc, onDeleted }) {
   const { deleteItem, deleting } = useCrud({
-    queryKey: ["employee", empId],
+    queryKey: ['employee', empId],
     endpoint: `/employees/${empId}`,
   });
 
@@ -96,7 +104,7 @@ function DocumentDeleteButton({ empId, doc, onDeleted }) {
       await deleteItem(`/employees/${empId}/documents/${doc.id}`);
       onDeleted?.(doc.id);
     } catch (error) {
-      console.error("Error deleting document:", error);
+      logger.error('Error deleting document:', error);
     }
   };
 
@@ -118,7 +126,7 @@ function DocumentDeleteButton({ empId, doc, onDeleted }) {
 }
 
 export function EmployeeDetailSheet({ selectedEmployee, onClose, onDelete, onEdit }) {
-  const [activeTab, setActiveTab] = useState("details");
+  const [activeTab, setActiveTab] = useState('details');
 
   const {
     data: employeeData,
@@ -140,7 +148,6 @@ export function EmployeeDetailSheet({ selectedEmployee, onClose, onDelete, onEdi
 
   const data = employeeData?.data || employeeData;
 
-
   const handleDeleteEmployee = async () => {
     const empId = data?.id || selectedEmployee?.id || selectedEmployee;
     if (!empId) return;
@@ -149,39 +156,41 @@ export function EmployeeDetailSheet({ selectedEmployee, onClose, onDelete, onEdi
       onDelete?.(empId);
       onClose?.();
     } catch (error) {
-      console.error("Failed to delete employee:", error);
+      logger.error('Failed to delete employee:', error);
     }
   };
 
   if (!selectedEmployee) return null;
 
-  const displayData = data ? {
-    id: data.id,
-    name: data.name,
-    email: data.email,
-    phone: data.phone,
-    position: data.job_title || '',
-    department: data.department || '',
-    branch: data.branch || '',
-    status: data.is_active ? 'active' : 'inactive',
-    hire_date: data.hire_date || new Date(),
-    photo: data.profile_image_url || null,
-    avatar: data.name ? data.name.charAt(0).toUpperCase() : 'E',
-    avatarBg: 'bg-blue-100',
-    avatarColor: 'text-blue-600',
-    nationalId: data.national_id || '',
-    birthDate: data.birth_date || '',
-    address: data.address || '',
-    direct_manager: data.direct_manager || '',
-    employment_type: data.employment_type || '',
-  } : selectedEmployee;
+  const displayData = data
+    ? {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        position: data.job_title || '',
+        department: data.department || '',
+        branch: data.branch || '',
+        status: data.is_active ? 'active' : 'inactive',
+        hire_date: data.hire_date || new Date(),
+        photo: data.profile_image_url || null,
+        avatar: data.name ? data.name.charAt(0).toUpperCase() : 'E',
+        avatarBg: 'bg-blue-100',
+        avatarColor: 'text-blue-600',
+        nationalId: data.national_id || '',
+        birthDate: data.birth_date || '',
+        address: data.address || '',
+        direct_manager: data.direct_manager || '',
+        employment_type: data.employment_type || '',
+      }
+    : selectedEmployee;
 
   const empId = data?.id || selectedEmployee?.id || selectedEmployee;
 
   const tabs = [
-    { id: "details", label: "التفاصيل" },
-    { id: "payroll", label: "كشوف المرتبات" },
-    { id: "contracts", label: "العقود" },
+    { id: 'details', label: 'التفاصيل' },
+    { id: 'payroll', label: 'كشوف المرتبات' },
+    { id: 'contracts', label: 'العقود' },
   ];
 
   return (
@@ -226,14 +235,16 @@ export function EmployeeDetailSheet({ selectedEmployee, onClose, onDelete, onEdi
                 </div>
                 <div className="flex items-center gap-2 justify-end">
                   <Button
-                    variant="ghost" size="icon"
+                    variant="ghost"
+                    size="icon"
                     className="h-7 w-7 sm:h-8 sm:w-8 bg-background border border-border text-muted-foreground hover:text-foreground"
                     onClick={() => onEdit?.(displayData)}
                   >
                     <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </Button>
                   <Button
-                    variant="ghost" size="icon"
+                    variant="ghost"
+                    size="icon"
                     className="h-7 w-7 sm:h-8 sm:w-8 bg-background border border-border text-muted-foreground hover:text-destructive"
                     onClick={handleDeleteEmployee}
                     disabled={deleting}
@@ -255,10 +266,11 @@ export function EmployeeDetailSheet({ selectedEmployee, onClose, onDelete, onEdi
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`whitespace-nowrap text-sm sm:text-lg font-medium pb-3 border-b-2 transition-colors flex-shrink-0 ${activeTab === tab.id
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
+                  className={`whitespace-nowrap text-sm sm:text-lg font-medium pb-3 border-b-2 transition-colors flex-shrink-0 ${
+                    activeTab === tab.id
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-muted-foreground hover:text-foreground'
+                  }`}
                 >
                   {tab.label}
                 </button>
@@ -266,7 +278,7 @@ export function EmployeeDetailSheet({ selectedEmployee, onClose, onDelete, onEdi
             </div>
 
             {/* ── Details Tab ── */}
-            {activeTab === "details" && (
+            {activeTab === 'details' && (
               <div className="px-3 sm:px-6  space-y-6 sm:space-y-8">
                 <div>
                   <SectionHeader
@@ -278,7 +290,11 @@ export function EmployeeDetailSheet({ selectedEmployee, onClose, onDelete, onEdi
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <InfoRow icon={Mail} label="البريد الإلكتروني" value={displayData.email} />
                     <InfoRow icon={Phone} label="رقم الهاتف" value={displayData.phone} />
-                    <InfoRow icon={Calendar} label="تاريخ الميلاد" value={formatDate(displayData.birthDate)} />
+                    <InfoRow
+                      icon={Calendar}
+                      label="تاريخ الميلاد"
+                      value={formatDate(displayData.birthDate)}
+                    />
                     <InfoRow icon={MapPin} label="العنوان" value={displayData.address} />
                     <InfoRow icon={Briefcase} label="الرقم القومي" value={displayData.nationalId} />
                   </div>
@@ -294,16 +310,28 @@ export function EmployeeDetailSheet({ selectedEmployee, onClose, onDelete, onEdi
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <InfoRow icon={Briefcase} label="القسم" value={displayData.department} />
                     <InfoRow icon={MapPin} label="الفرع" value={displayData.branch} />
-                    <InfoRow icon={Users} label="المدير المباشر" value={displayData.direct_manager} />
-                    <InfoRow icon={Calendar} label="نوع التوظيف" value={displayData.employment_type} />
-                    <InfoRow icon={Calendar} label="تاريخ التعيين" value={formatJoinDate(displayData.hire_date)} />
+                    <InfoRow
+                      icon={Users}
+                      label="المدير المباشر"
+                      value={displayData.direct_manager}
+                    />
+                    <InfoRow
+                      icon={Calendar}
+                      label="نوع التوظيف"
+                      value={displayData.employment_type}
+                    />
+                    <InfoRow
+                      icon={Calendar}
+                      label="تاريخ التعيين"
+                      value={formatJoinDate(displayData.hire_date)}
+                    />
                   </div>
                 </div>
               </div>
             )}
 
             {/* ── Payroll Tab ── */}
-            {activeTab === "payroll" && (
+            {activeTab === 'payroll' && (
               <div className="px-3 sm:px-6">
                 <SectionHeader
                   icon={Briefcase}
@@ -316,7 +344,7 @@ export function EmployeeDetailSheet({ selectedEmployee, onClose, onDelete, onEdi
             )}
 
             {/* ── Contracts Tab ── */}
-            {activeTab === "contracts" && (
+            {activeTab === 'contracts' && (
               <div className="px-3 sm:px-6">
                 <SectionHeader
                   icon={FileText}
@@ -337,7 +365,9 @@ export function EmployeeDetailSheet({ selectedEmployee, onClose, onDelete, onEdi
                             <FileText className="h-4 w-4 sm:h-6 sm:w-6 text-muted-foreground" />
                           </div>
                           <div className="min-w-0">
-                            <p className="text-xs sm:text-lg font-medium text-[#101011] truncate">{doc.file_name}</p>
+                            <p className="text-xs sm:text-lg font-medium text-[#101011] truncate">
+                              {doc.file_name}
+                            </p>
                             <p className="text-xs sm:text-sm text-muted-foreground">
                               {(doc.file_size / 1024).toFixed(1)} KB
                             </p>

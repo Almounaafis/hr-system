@@ -14,6 +14,11 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      external: ['react-is'],
+    },
+  },
   preview: {
     allowedHosts: ["pasmahr.com", "www.pasmahr.com", ".pasmahr.com"],
   },

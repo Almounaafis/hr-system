@@ -1,5 +1,6 @@
-﻿import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import useAuthStore from '@/store/useAuthStore';
+import logger from '@/lib/logger';
 import { useCrud } from '@/hooks/useCrud';
 import LoginPhotoPanel from '@/features/auth/LoginPhotoPanel';
 import { RegisterHeader } from '@/features/auth/Register/RegisterHeader';
@@ -21,7 +22,7 @@ export default function Register() {
   function handleRegisterSuccess(response) {
     const email = response?.data?.email || response?.email;
 
-    if (!email) return console.warn('No email received');
+    if (!email) return logger.warn('No email received');
 
     setPendingEmail(email);
     navigate('/verify');
@@ -29,12 +30,12 @@ export default function Register() {
 
   const profile = searchParams.get('profile');
   let profileData = null;
-  
+
   if (profile) {
     try {
       profileData = JSON.parse(atob(profile));
     } catch (error) {
-      console.error('Error decoding profile:', error);
+      logger.error('Error decoding profile:', error);
     }
   }
 
@@ -60,13 +61,17 @@ export default function Register() {
       <LoginPhotoPanel />
       <div className="w-full md:w-1/2 bg-card p-4 md:p-8  flex flex-col justify-center h-full max-w-[600px] mx-auto">
         <RegisterHeader />
-        <RegisterForm 
-          onSubmit={onSubmit} 
+        <RegisterForm
+          onSubmit={onSubmit}
           loading={loading}
-          prefillData={profileData ? {
-            name: profileData.name || '',
-            email: profileData.email || '',
-          } : null}
+          prefillData={
+            profileData
+              ? {
+                  name: profileData.name || '',
+                  email: profileData.email || '',
+                }
+              : null
+          }
         />
         <SocialLogin />
         <RegisterFooter />

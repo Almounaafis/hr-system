@@ -1,20 +1,21 @@
-﻿import { useState, useMemo } from "react";
-import toast from "react-hot-toast";
-import { PayrollHeader } from "@/features/payroll/PayrollHeader";
-import { PayrollFilters } from "@/features/payroll/PayrollFilters";
-import { PayrollKPIs } from "@/features/payroll/PayrollKPIs";
-import { PayrollContent } from "@/features/payroll/PayrollContent";
-import { CreatePayrollDialog } from "@/features/payroll/CreatePayrollDialog";
-import { AddDeductionAllowanceDialog } from "@/features/payroll/AddDeductionAllowanceDialog";
-import { EmployeePayrollSheet } from "@/features/payroll/EmployeePayrollSheet";
+﻿import { useState, useMemo } from 'react';
+import toast from 'react-hot-toast';
+import logger from '@/lib/logger';
+import { PayrollHeader } from '@/features/payroll/PayrollHeader';
+import { PayrollFilters } from '@/features/payroll/PayrollFilters';
+import { PayrollKPIs } from '@/features/payroll/PayrollKPIs';
+import { PayrollContent } from '@/features/payroll/PayrollContent';
+import { CreatePayrollDialog } from '@/features/payroll/CreatePayrollDialog';
+import { AddDeductionAllowanceDialog } from '@/features/payroll/AddDeductionAllowanceDialog';
+import { EmployeePayrollSheet } from '@/features/payroll/EmployeePayrollSheet';
 import {
   usePayrollDeductions,
   usePayrollBonuses,
   usePayrollList,
   useApproveSalaries,
   useEditSalaryProfile,
-} from "@/features/payroll/hooks/usePayroll";
-import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
+} from '@/features/payroll/hooks/usePayroll';
+import { useDebouncedCallback } from '@/hooks/useDebouncedCallback';
 
 // Month name to number mapping
 const MONTH_NAME_TO_NUMBER = {
@@ -39,18 +40,18 @@ const MONTH_NUMBER_TO_NAME = Object.fromEntries(
 
 // Month number to Arabic label mapping
 const MONTH_NUMBER_TO_LABEL = {
-  1: "يناير",
-  2: "فبراير",
-  3: "مارس",
-  4: "أبريل",
-  5: "مايو",
-  6: "يونيو",
-  7: "يوليو",
-  8: "أغسطس",
-  9: "سبتمبر",
-  10: "أكتوبر",
-  11: "نوفمبر",
-  12: "ديسمبر",
+  1: 'يناير',
+  2: 'فبراير',
+  3: 'مارس',
+  4: 'أبريل',
+  5: 'مايو',
+  6: 'يونيو',
+  7: 'يوليو',
+  8: 'أغسطس',
+  9: 'سبتمبر',
+  10: 'أكتوبر',
+  11: 'نوفمبر',
+  12: 'ديسمبر',
 };
 
 export default function Payroll() {
@@ -69,11 +70,11 @@ export default function Payroll() {
 
   // ── Table Filter State ────────────────────────────────────────────────────
   const [filterMonth, setFilterMonth] = useState(
-    MONTH_NUMBER_TO_NAME[currentMonthNumber] ?? "january"
+    MONTH_NUMBER_TO_NAME[currentMonthNumber] ?? 'january'
   );
-  const [filterSort, setFilterSort] = useState("newest");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [filterSort, setFilterSort] = useState('newest');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedEmployeeIds, setSelectedEmployeeIds] = useState([]);
 
@@ -89,7 +90,11 @@ export default function Payroll() {
     setSearchQuery(value); // فوري - للـ input نفسه
     debouncedSetSearch(value); // متأخر - للـ request
   };
-  const { payrolls, isLoading: isLoadingPayrolls, isRefetching } = usePayrollList({
+  const {
+    payrolls,
+    isLoading: isLoadingPayrolls,
+    isRefetching,
+  } = usePayrollList({
     month: selectedMonthNumber,
     year: selectedYearNumber,
     search: debouncedSearch,
@@ -145,7 +150,7 @@ export default function Payroll() {
       : selectedEmployeeIds;
 
     if (employeeIds.length === 0) {
-      toast.error("يرجى تحديد موظف واحد على الأقل");
+      toast.error('يرجى تحديد موظف واحد على الأقل');
       return;
     }
 
@@ -155,7 +160,7 @@ export default function Payroll() {
     }
 
     if (allEntries.length === 0) {
-      toast.error("يرجى إضافة عنصر واحد على الأقل");
+      toast.error('يرجى إضافة عنصر واحد على الأقل');
       return;
     }
 
@@ -170,20 +175,20 @@ export default function Payroll() {
     };
 
     try {
-      if (actionType === "deduction") {
+      if (actionType === 'deduction') {
         await createDeductions(payload);
       } else {
         await createBonuses(payload);
       }
       handleCloseActionDialog();
     } catch (error) {
-      console.error("Failed to create payroll item:", error);
+      logger.error('Failed to create payroll item:', error);
     }
   };
 
   const handleApproveSelected = async (employeeIds) => {
     if (!employeeIds?.length) {
-      toast.error("يرجى تحديد موظف واحد على الأقل");
+      toast.error('يرجى تحديد موظف واحد على الأقل');
       return;
     }
     await approveSalaries({
@@ -199,14 +204,15 @@ export default function Payroll() {
         employeeId,
         body: { basic_salary: Number(basicSalary) },
       });
-      toast.success("تم تحديث الراتب الأساسي بنجاح");
+      toast.success('تم تحديث الراتب الأساسي بنجاح');
     } catch (error) {
-      console.error("Failed to update salary:", error);
-      toast.error("فشل تحديث الراتب الأساسي");
+      logger.error('Failed to update salary:', error);
+      toast.error('فشل تحديث الراتب الأساسي');
     }
   };
 
-  const monthLabel = MONTH_NUMBER_TO_LABEL[selectedMonthNumber] ?? MONTH_NUMBER_TO_LABEL[currentMonthNumber];
+  const monthLabel =
+    MONTH_NUMBER_TO_LABEL[selectedMonthNumber] ?? MONTH_NUMBER_TO_LABEL[currentMonthNumber];
 
   return (
     <div className="space-y-6 p-1">
@@ -218,10 +224,7 @@ export default function Payroll() {
         exportYear={selectedYearNumber}
       />
 
-      <PayrollKPIs
-        month={selectedMonthNumber}
-        year={selectedYearNumber}
-      />
+      <PayrollKPIs month={selectedMonthNumber} year={selectedYearNumber} />
 
       <div className="bg-background rounded-2xl shadow-sm p-6">
         <div className="flex flex-wrap md:flex-nowrap items-center gap-4 mb-6 justify-between">
@@ -239,8 +242,8 @@ export default function Payroll() {
             currentYear={currentYear}
             currentMonthNumber={currentMonthNumber}
             selectedCount={selectedEmployeeIds.length}
-            onAddDeduction={() => handleOpenActionDialog("deduction", null)}
-            onAddAllowance={() => handleOpenActionDialog("allowance", null)}
+            onAddDeduction={() => handleOpenActionDialog('deduction', null)}
+            onAddAllowance={() => handleOpenActionDialog('allowance', null)}
           />
         </div>
         <PayrollContent
@@ -249,8 +252,8 @@ export default function Payroll() {
           currentPage={currentPage}
           totalPages={totalPages}
           setCurrentPage={setCurrentPage}
-          onAddDeduction={(employee) => handleOpenActionDialog("deduction", employee)}
-          onAddAllowance={(employee) => handleOpenActionDialog("allowance", employee)}
+          onAddDeduction={(employee) => handleOpenActionDialog('deduction', employee)}
+          onAddAllowance={(employee) => handleOpenActionDialog('allowance', employee)}
           selectedEmployeeIds={selectedEmployeeIds}
           setSelectedEmployeeIds={setSelectedEmployeeIds}
           onViewDetails={(employee) => setSelectedEmployee(employee)}
@@ -259,10 +262,7 @@ export default function Payroll() {
         />
       </div>
 
-      <CreatePayrollDialog
-        open={isCreateModalOpen}
-        onOpenChange={setIsCreateModalOpen}
-      />
+      <CreatePayrollDialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen} />
 
       <AddDeductionAllowanceDialog
         open={isActionDialogOpen}
@@ -275,7 +275,7 @@ export default function Payroll() {
         onSubmit={handleSubmitActionDialog}
         selectedMonth={selectedMonthNumber}
         selectedYear={selectedYearNumber}
-        isCreating={actionType === "deduction" ? isCreatingDeductions : isCreatingBonuses}
+        isCreating={actionType === 'deduction' ? isCreatingDeductions : isCreatingBonuses}
       />
 
       <EmployeePayrollSheet

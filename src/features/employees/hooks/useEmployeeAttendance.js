@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { useCrud } from "@/hooks/useCrud";
-import api from "@/lib/axios";
-import toast from "react-hot-toast";
+import { useState } from 'react';
+import { useCrud } from '@/hooks/useCrud';
+import api from '@/lib/axios';
+import logger from '@/lib/logger';
+import toast from 'react-hot-toast';
 
 /**
  * Hook to fetch employee attendance data with filtering
@@ -11,20 +12,20 @@ import toast from "react-hot-toast";
  */
 export function useEmployeeAttendance(employeeId, filters = {}) {
   const { month, week, status } = filters;
-  
+
   // Build query parameters
   const queryParams = new URLSearchParams();
   if (month) queryParams.append('month', month);
   if (week) queryParams.append('week', week);
   if (status) queryParams.append('status', status);
-  
+
   const queryString = queryParams.toString();
-  const endpoint = employeeId 
+  const endpoint = employeeId
     ? `/attendance/employee/${employeeId}${queryString ? `?${queryString}` : ''}`
     : '';
 
   const crud = useCrud({
-    queryKey: ["employee-attendance", employeeId, filters],
+    queryKey: ['employee-attendance', employeeId, filters],
     endpoint,
     enabled: !!employeeId,
     select: (data) => {
@@ -39,7 +40,7 @@ export function useEmployeeAttendance(employeeId, filters = {}) {
 
   // Fetch employee data separately
   const { data: employeeData, isLoading: employeeLoading } = useCrud({
-    queryKey: ["employee", employeeId],
+    queryKey: ['employee', employeeId],
     endpoint: employeeId ? `/employees/${employeeId}` : null,
     enabled: !!employeeId,
   });
@@ -114,7 +115,7 @@ export function useExportEmployeeAttendance() {
 
       toast.success('تم تصدير سجل حضور الموظف بنجاح');
     } catch (error) {
-      console.error('Error exporting employee attendance:', error);
+      logger.error('Error exporting employee attendance:', error);
       toast.error('حدث خطأ أثناء تصدير سجل حضور الموظف');
     } finally {
       format === 'pdf' ? setIsExportingPdf(false) : setIsExportingExcel(false);
@@ -131,7 +132,7 @@ export function useExportEmployeeAttendance() {
       await api.post(`/attendance/employee/${employeeId}/email`, null, { params });
       toast.success('تم إرسال سجل حضور الموظف إلى البريد الإلكتروني بنجاح');
     } catch (error) {
-      console.error('Error sending employee attendance email:', error);
+      logger.error('Error sending employee attendance email:', error);
       toast.error('حدث خطأ أثناء إرسال البريد الإلكتروني');
     } finally {
       setIsSendingEmail(false);

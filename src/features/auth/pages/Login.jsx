@@ -1,5 +1,6 @@
-﻿import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import useAuthStore from '@/store/useAuthStore';
+import logger from '@/lib/logger';
 import { useCrud } from '@/hooks/useCrud';
 import LoginPhotoPanel from '@/features/auth/LoginPhotoPanel';
 import { LoginHeader } from '@/features/auth/Login/LoginHeader';
@@ -21,26 +22,30 @@ export default function Login() {
   });
 
   function handleLoginSuccess(response) {
-    const token = response?.data?.accessToken || response?.accessToken || response?.data?.token || response?.token;
+    const token =
+      response?.data?.accessToken ||
+      response?.accessToken ||
+      response?.data?.token ||
+      response?.token;
     const user = response?.data?.user || response?.user;
     const requiresOTP = response?.data?.requiresOTP || response?.requiresOTP || false;
 
     if (user?.role === 'employee') {
-      toast.error("عفواً، لا يمكنك الدخول. هذا النظام مخصص لإدارة الموارد البشرية والمديرين فقط.");
+      toast.error('عفواً، لا يمكنك الدخول. هذا النظام مخصص لإدارة الموارد البشرية والمديرين فقط.');
       return;
     }
 
-    if (!token) return console.warn('No token received');
+    if (!token) return logger.warn('No token received');
 
     Cookies.set('authTokenBasma', token, {
       expires: 7,
       secure: true,
-      sameSite: 'strict'
+      sameSite: 'strict',
       // ⚠️ httpOnly لا يمكن ضبطها من الـ Frontend — يجب على الـ Backend إرسال Cookie بـ httpOnly
     });
 
     login({ user, token, requiresOTP });
-    toast.success(response?.message || "تم تسجيل الدخول بنجاح");
+    toast.success(response?.message || 'تم تسجيل الدخول بنجاح');
 
     if (requiresOTP) {
       navigate('/otp');
