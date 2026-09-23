@@ -1,12 +1,11 @@
-import axios from "axios";
-import Cookies from "js-cookie";
-import toast from "react-hot-toast";
-import useAuthStore from "../store/useAuthStore";
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import useAuthStore from '../store/useAuthStore';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
-    "Content-Type": "multipart/form-data",
+    'Content-Type': 'multipart/form-data',
   },
 });
 
@@ -21,18 +20,20 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
+    const requestUrl = error.config?.url || '';
+    const isAuthEndpoint =
+      requestUrl.includes('/auth/login') ||
+      requestUrl.includes('/auth/') ||
+      requestUrl.includes('/login');
+
     if (error.response?.status === 401) {
-      Cookies.remove('authTokenBasma');
-      useAuthStore.getState().logout();
-      window.location.href = '/login';
-    } else if (error.response?.status === 403) {
-      toast.error("ليس لديك صلاحية للوصول لهذا المورد");
-    } else if (error.response?.status >= 500) {
-      toast.error("حدث خطأ في الخادم، يرجى المحاولة لاحقاً");
-    } else if (error.code === "ECONNABORTED") {
-      toast.error("انتهت مهلة الاتصال، يرجى المحاولة مرة أخرى");
-    } else if (!error.response) {
-      toast.error("تعذر الاتصال بالخادم، تحقق من اتصال الإنترنت");
+      if (!isAuthEndpoint) {
+        Cookies.remove('authTokenBasma');
+        useAuthStore.getState().logout();
+        if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+      }
     }
     return Promise.reject(error);
   }

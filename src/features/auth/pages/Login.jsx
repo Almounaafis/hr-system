@@ -54,7 +54,13 @@ export default function Login() {
     }
   }
 
-  const onSubmit = (data) => createItem({ endpoint: '/auth/login', body: data });
+  const onSubmit = async (data) => {
+    try {
+      await createItem({ endpoint: '/auth/login', body: data });
+    } catch {
+      // تم التعامل مع رسالة الخطأ عبر useCrud (handleError)
+    }
+  };
 
   return (
     <div className="w-screen h-screen flex flex-col md:flex-row bg-card">

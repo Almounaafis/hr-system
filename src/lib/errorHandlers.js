@@ -25,17 +25,54 @@ import { toast } from 'react-hot-toast';
  * }
  */
 export function handleError(error) {
+  // 1. في حال وجود قائمة أخطاء من الباك إند
   const errors = error?.response?.data?.errors;
-  if (Array.isArray(errors)) {
-    errors.forEach((err) => toast.error(err.message));
-  } else {
-    toast.error(
-      error?.response?.data?.message ||
-        error?.response?.data?.error ||
-        error?.message ||
-        'حدث خطأ ما'
-    );
+  if (Array.isArray(errors) && errors.length > 0) {
+    errors.forEach((err) => toast.error(err.message || err.msg || 'حدث خطأ ما'));
+    return;
   }
+
+  // 2. رسالة الخطأ المباشرة القادمة من الباك إند
+  const serverMessage = error?.response?.data?.message || error?.response?.data?.error;
+
+  if (serverMessage && typeof serverMessage === 'string') {
+    if (
+      error?.response?.status === 401 &&
+      (serverMessage.toLowerCase() === 'unauthorized' ||
+        serverMessage.toLowerCase().includes('invalid credentials'))
+    ) {
+      toast.error('البريد الإلكتروني أو كلمة المرور غير صحيحة');
+      return;
+    }
+    toast.error(serverMessage);
+    return;
+  }
+
+  // 3. أخطاء انقطاع الاتصال بالخادم / الشبكة
+  if (!error?.response) {
+    toast.error('تعذر الاتصال بالخادم، تحقق من اتصال الإنترنت');
+    return;
+  }
+
+  const status = error?.response?.status;
+  if (status === 401) {
+    toast.error('البريد الإلكتروني أو كلمة المرور غير صحيحة');
+    return;
+  }
+  if (status === 403) {
+    toast.error('ليس لديك صلاحية للوصول لهذا المورد');
+    return;
+  }
+  if (status >= 500) {
+    toast.error('حدث خطأ في الخادم، يرجى المحاولة لاحقاً');
+    return;
+  }
+  if (error?.code === 'ECONNABORTED') {
+    toast.error('انتهت مهلة الاتصال، يرجى المحاولة مرة أخرى');
+    return;
+  }
+
+  toast.error(error?.message || 'حدث خطأ ما');
 }
 
 /**
