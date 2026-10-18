@@ -22,6 +22,7 @@ import { TabBar } from '@/features/settings/TabBar';
 import { AddShiftDialog } from '@/features/settings/AddShiftDialog';
 import { useSettings } from '@/features/settings/hooks/useSettings';
 import { useShifts } from '@/features/settings/hooks/useShifts';
+import { SettingsPageSkeleton } from '@/components/skeletons/SettingsSkeletons';
 
 export default function PayrollAttendancePolicy() {
   const [activeTab, setActiveTab] = useState('payroll-cycle');
@@ -129,7 +130,7 @@ export default function PayrollAttendancePolicy() {
   }, [settingsData, reset]);
 
   if (isLoading) {
-    return <div className="p-4 text-center text-muted-foreground">جاري التحميل...</div>;
+    return <SettingsPageSkeleton activeTab={activeTab} />;
   }
 
   if (isError) {

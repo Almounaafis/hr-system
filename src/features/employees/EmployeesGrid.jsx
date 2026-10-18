@@ -1,14 +1,19 @@
-﻿// ─── EmployeesGrid.jsx ────────────────────────────────────────────────────────
-import EmployeeCard from "@/features/employees/EmployeeCard";
-import { Loader2 } from "lucide-react";
+﻿import EmployeeCard from "@/features/employees/EmployeeCard";
+import { EmployeesGridSkeleton } from "@/components/skeletons/EmployeesSkeletons";
+import { EMPLOYEES_PAGE_SIZE } from "@/lib/constants";
 
-export default function EmployeesGrid({ employees, isLoading, selectedIds, onToggleSelect, onOpen, onEdit, onDelete, onSchedule }) {
+export default function EmployeesGrid({
+  employees,
+  isLoading,
+  selectedIds,
+  onToggleSelect,
+  onOpen,
+  onEdit,
+  onDelete,
+  onSchedule,
+}) {
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center py-12 sm:py-16">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <EmployeesGridSkeleton count={EMPLOYEES_PAGE_SIZE} />;
   }
 
   if (!employees.length) {

@@ -19,7 +19,8 @@ import {
 } from '@/features/requests/hooks/useRequests';
 import { useRequestFilters } from '@/features/requests/hooks/useRequestFilters';
 import { RequestsToolbar } from '@/features/requests/RequestsToolbar';
-
+import { KanbanSkeleton } from '@/components/skeletons/RequestsSkeltons';
+ 
 export default function Requests() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [selectedRequestKind, setSelectedRequestKind] = useState(null);
@@ -170,7 +171,7 @@ export default function Requests() {
       {/* Kanban — snaps column-by-column on mobile, free-scrolls on desktop */}
       <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
         {isLoading ? (
-          <div className="p-4 text-center text-muted-foreground">جاري التحميل...</div>
+          <KanbanSkeleton />
         ) : columns.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground">
             لا توجد طلبات مطابقة للفلاتر الحالية

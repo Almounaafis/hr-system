@@ -5,35 +5,36 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
-import { Loader2, CheckCheck } from "lucide-react";
+import { CheckCheck } from "lucide-react";
 
 import imageLate from "../assets/notification-late.png";
 import imageOrder from "../assets/notification-order.png";
 import imageAdd from "../assets/notification-add.png";
 import { useNotificationsData } from "@/features/notifications/hooks/useNotificationsData";
 import NotificationCard from "@/features/notifications/NotificationCard ";
+import { NotificationsListSkeleton } from "@/components/skeletons/NotificationsSkeletons";
 
 // ─── تحويل نوع الإشعار ─────────────────────────────
 const NOTIFICATION_META = {
-  late: { 
-    image: imageLate, 
-    badge: { label: "حضور", bg: "#FFF7F0", color: "#E88024" } 
+  late: {
+    image: imageLate,
+    badge: { label: "حضور", bg: "#FFF7F0", color: "#E88024" },
   },
-  leave_request: { 
-    image: imageOrder, 
-    badge: { label: "طلبات", bg: "#DCF1F9", color: "#3D7A83" } 
+  leave_request: {
+    image: imageOrder,
+    badge: { label: "طلبات", bg: "#DCF1F9", color: "#3D7A83" },
   },
-  new_employee: { 
-    image: imageAdd, 
-    badge: { label: "الموظفين", bg: "#F3EFFE", color: "#5B3FA6" } 
+  new_employee: {
+    image: imageAdd,
+    badge: { label: "الموظفين", bg: "#F3EFFE", color: "#5B3FA6" },
   },
-  new_bonus_request: { 
-    image: imageOrder, 
-    badge: { label: "مكافآت", bg: "#FEF3E8", color: "#E88024" } 
+  new_bonus_request: {
+    image: imageOrder,
+    badge: { label: "مكافآت", bg: "#FEF3E8", color: "#E88024" },
   },
-  default: { 
-    image: imageAdd, 
-    badge: { label: "عام", bg: "#F3EFFE", color: "#5B3FA6" } 
+  default: {
+    image: imageAdd,
+    badge: { label: "عام", bg: "#F3EFFE", color: "#5B3FA6" },
   },
 };
 
@@ -52,8 +53,8 @@ function formatTimestamp(dateStr) {
   const diffHours = Math.floor(diffMins / 60);
   if (diffHours < 24) return `منذ ${diffHours} ساعة`;
 
-  const isYesterday = 
-    new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).toDateString() === 
+  const isYesterday =
+    new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).toDateString() ===
     new Date(date.getFullYear(), date.getMonth(), date.getDate()).toDateString();
 
   const time = date.toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" });
@@ -186,12 +187,8 @@ const Notifications = () => {
         </div>
       </Card>
 
-      {/* LOADING */}
-      {isLoading && (
-        <div className="flex items-center justify-center py-16 text-muted-foreground">
-          <Loader2 className="h-6 w-6 animate-spin" />
-        </div>
-      )}
+      {/* LOADING → SKELETON */}
+      {isLoading && <NotificationsListSkeleton />}
 
       {!isLoading && (
         <>

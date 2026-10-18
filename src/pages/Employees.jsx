@@ -98,7 +98,7 @@ const {
   };
 
   const handleCancelModal = () => {
-    setShowAddEmployeeModal(false);
+    setShowAddEmployeeModal(false); 
     setEditingId(null);
   };
   const handleScheduleEmployee = (employee) => {

@@ -41,7 +41,6 @@ export default function Login() {
       expires: 7,
       secure: true,
       sameSite: 'strict',
-      // ⚠️ httpOnly لا يمكن ضبطها من الـ Frontend — يجب على الـ Backend إرسال Cookie بـ httpOnly
     });
 
     login({ user, token, requiresOTP });

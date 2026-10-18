@@ -21,7 +21,7 @@ import { formatDate } from '@/features/requests/lib/helpers';
 import api from '@/lib/axios';
 import { useCrud } from '@/hooks/useCrud';
 import { PayrollDetails } from '../payroll/PayrollDetails';
-// import toast from "react-hot-toast";
+import { EmployeeDetailSheetSkeleton } from '@/components/skeletons/EmployeeDetailSkeletons';
 
 function InfoRow({ icon: Icon, label, value }) {
   return (
@@ -69,7 +69,6 @@ function DocumentDownloadButton({ empId, doc }) {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       logger.error('Failed to download document:', error);
-      // toast.error("حدث خطأ أثناء تحميل الملف");
     } finally {
       setDownloading(false);
     }
@@ -199,9 +198,7 @@ export function EmployeeDetailSheet({ selectedEmployee, onClose, onDelete, onEdi
         <SheetTitle className="sr-only">تفاصيل الموظف</SheetTitle>
 
         {isLoading ? (
-          <div className="flex items-center justify-center h-full py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
+          <EmployeeDetailSheetSkeleton activeTab={activeTab} />
         ) : (
           <>
             {/* ── Header ── */}

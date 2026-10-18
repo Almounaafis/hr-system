@@ -8,6 +8,8 @@ import { useOrgChartData } from "@/features/employees/hooks/useOrgChartData";
 import { useCrud } from "@/hooks/useCrud";
 import FormInput from "@/components/shared/forms/FormInput";
 import { useForm, Controller } from "react-hook-form";
+import { OrgChartSkeleton } from "@/components/skeletons/EmployeesSkeletons";
+
 
 const DEPARTMENT_COLORS = [
   { id: "teal", dot: "#4E9DA8", bg: "#4E9DA8", text: "#FFFFFF" },
@@ -41,22 +43,22 @@ function PersonNode({
       className="group relative flex items-center gap-1 sm:gap-3 rounded-2xl border border-border bg-card px-1 sm:px-3 py-1 sm:py-2.5 shadow-sm text-left w-full"
     >
       <div className="h-7 w-7 sm:h-9 sm:w-9 flex-shrink-0 overflow-hidden rounded-full bg-muted">
-  {photo ? (
-    <img
-      src={photo}
-      alt={name}
-      className="h-full w-full object-cover"
-    />
-  ) : (
-    <div className="flex h-full w-full items-center justify-center text-[10px] sm:text-xs font-semibold uppercase">
-      {name
-        ?.split(" ")
-        .map((part) => part[0])
-        .slice(0, 2)
-        .join("") || "?"}
-    </div>
-  )}
-</div>
+        {photo ? (
+          <img
+            src={photo}
+            alt={name}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-[10px] sm:text-xs font-semibold uppercase">
+            {name
+              ?.split(" ")
+              .map((part) => part[0])
+              .slice(0, 2)
+              .join("") || "?"}
+          </div>
+        )}
+      </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-[10px] sm:text-sm font-semibold text-foreground">{name}</p>
         <p className="truncate text-[10px] sm:text-xs text-muted-foreground">{title}</p>
@@ -583,9 +585,7 @@ export default function OrgChart({
       </div>
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-16 text-muted-foreground">
-          <Loader2 className="h-6 w-6 animate-spin" />
-        </div>
+        <OrgChartSkeleton />
       ) : (
         <>
           {/* ── Mobile view ── */}

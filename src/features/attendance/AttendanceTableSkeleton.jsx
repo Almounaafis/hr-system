@@ -1,18 +1,54 @@
-export function AttendanceTableSkeleton({ rows = 6 }) {
+// @/features/attendance/AttendanceTableSkeleton.jsx
+import { Skeleton } from "@/components/skeletons/RequestsSkeltons";
+
+/**
+ * Returns the <td>s for one attendance skeleton row.
+ * Matches every column of AttendanceTable.
+ */
+export function AttendanceRowSkeleton() {
   return (
-    <div className="space-y-2 py-2">
-      {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex items-center gap-3 py-2 border-b border-border last:border-0">
-          <div className="w-9 h-9 rounded-full bg-muted animate-pulse flex-shrink-0" />
-          <div className="flex-1 space-y-2">
-            <div className="h-3 w-1/3 rounded bg-muted animate-pulse" />
-            <div className="h-2.5 w-1/5 rounded bg-muted animate-pulse" />
+    <>
+      <td className="py-3 px-2 w-8">
+        <Skeleton className="h-4 w-4 rounded" />
+      </td>
+
+      <td className="py-3 px-2">
+        <div className="flex items-center gap-2.5">
+          <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+          <div className="space-y-1.5 min-w-0">
+            <Skeleton className="h-3 w-28" />
+            <Skeleton className="h-2.5 w-16" />
           </div>
-          <div className="h-3 w-16 rounded bg-muted animate-pulse hidden sm:block" />
-          <div className="h-3 w-16 rounded bg-muted animate-pulse hidden sm:block" />
-          <div className="h-6 w-20 rounded-full bg-muted animate-pulse" />
         </div>
-      ))}
-    </div>
+      </td>
+
+      <td className="py-3 px-2">
+        <Skeleton className="h-5 w-20 rounded-md" />
+      </td>
+
+      <td className="py-3 px-2">
+        <Skeleton className="h-3.5 w-24" />
+      </td>
+
+      <td className="py-3 px-2">
+        <Skeleton className="h-3.5 w-16" />
+      </td>
+
+      <td className="py-3 px-2">
+        <Skeleton className="h-3.5 w-16" />
+      </td>
+
+      <td className="py-3 px-2">
+        <Skeleton className="h-7 w-28 rounded-lg" />
+      </td>
+
+      <td className="py-3 px-2">
+        <Skeleton className="h-3.5 w-20" />
+      </td>
+
+      <td className="py-3 px-2">
+        <Skeleton className="h-8 w-24 rounded-md" />
+      </td>
+    </>
   );
 }

@@ -24,7 +24,8 @@ const navigation = [
   { name: "الحضور والانصراف", href: "/attendance", icon: CalendarCheck },
   { name: "الرواتب", href: "/payroll", icon: DollarSign },
   { name: "شبكات الحضور", href: "/networks", icon: Wifi },
-
+  { name: "الإعدادات", href: "/settings", icon: Settings },
+  { name: "الإشعارات", href: "/notifications", icon: Bell },
 ];
 
 export default function AppSidebar({ isOpen, collapsed, onToggle }) {
@@ -42,7 +43,6 @@ export default function AppSidebar({ isOpen, collapsed, onToggle }) {
       )}
 
       <aside
-        dir="rtl"
         className={cn(
           "fixed inset-y-0 right-0 z-50 flex w-72 flex-col border-l bg-sidebar text-sidebar-foreground transition-all duration-300",
           isOpen ? "translate-x-0" : "translate-x-full",
@@ -107,46 +107,6 @@ export default function AppSidebar({ isOpen, collapsed, onToggle }) {
                   </Link>
                 );
               })}
-            </nav>
-          </div>
-
-          <div className="mt-6 px-3">
-            <p
-              className={cn(
-                "mb-2 px-3 text-xs font-medium text-muted-foreground",
-                collapsed && "lg:hidden",
-              )}
-            >
-              النظام
-            </p>
-
-            <nav className="flex flex-col gap-1">
-              <Link
-                to="/settings"
-                onClick={closeOnMobile}
-                title="الإعدادات"
-                className={cn(
-                  "flex h-11 items-center gap-3 rounded-xl px-3 text-foreground hover:bg-muted",
-                  collapsed && "lg:justify-center",
-                )}
-              >
-                <Settings className="h-5 w-5 shrink-0" />
-                <span className={cn(collapsed && "lg:hidden")}>الإعدادات</span>
-              </Link>
-
-              
-              <Link
-                to="/notifications"
-                onClick={closeOnMobile}
-                title="الإشعارات"
-                className={cn(
-                  "flex h-11 items-center gap-3 rounded-xl px-3 text-foreground hover:bg-muted",
-                  collapsed && "lg:justify-center",
-                )}
-              >
-                <Bell className="h-5 w-5 shrink-0" />
-                <span className={cn(collapsed && "lg:hidden")}>الإشعارات</span>
-              </Link>
             </nav>
           </div>
         </div>

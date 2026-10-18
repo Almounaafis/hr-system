@@ -46,3 +46,6 @@ export const statusPillStyles = {
 };
 
 export const statusOptions = ["present", "late", "absent", "remote", "vacation", "permission"];
+
+export const SEARCH_DEBOUNCE_MS = 400;
+export const EMPLOYEES_PAGE_SIZE = 6;

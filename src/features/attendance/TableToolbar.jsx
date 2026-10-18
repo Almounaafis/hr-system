@@ -14,7 +14,7 @@ export const TableToolbar = memo(function TableToolbar({
   onStatusChange,
   onExportExcel,
   onExportPdf,
-  onSendEmail,
+  onSendEmail, 
   isExportingExcel,
   isExportingPdf,
   isSendingEmail,

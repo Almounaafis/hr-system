@@ -94,6 +94,8 @@ export default function Payroll() {
     payrolls,
     isLoading: isLoadingPayrolls,
     isRefetching,
+    isError,        
+    refetch,        
   } = usePayrollList({
     month: selectedMonthNumber,
     year: selectedYearNumber,
@@ -248,6 +250,8 @@ export default function Payroll() {
         </div>
         <PayrollContent
           isLoading={isLoadingPayrolls || isRefetching}
+          isError={isError}
+          onRetry={refetch}
           filteredEmployees={paginatedEmployees}
           currentPage={currentPage}
           totalPages={totalPages}

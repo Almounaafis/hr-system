@@ -234,7 +234,7 @@ export function Attendancelog({ employeeId, month }) {
         <p className="text-center text-sm text-red-400 py-10">حدث خطأ أثناء تحميل البيانات</p>
       ) : !records?.length ? (
         <p className="text-center text-sm text-gray-400 py-10">لا توجد بيانات مطابقة</p>
-      ) : (
+      ) : ( 
         <TableShared columns={columns} data={records} />
       )}
 

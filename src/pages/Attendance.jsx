@@ -1,3 +1,4 @@
+// @/features/attendance/Attendance.jsx
 import { useState, useMemo, useCallback } from 'react';
 import Pagination from '@/components/shared/Pagination';
 import logger from '@/lib/logger';
@@ -7,7 +8,6 @@ import { EditAttendanceSheet } from '@/features/attendance/EditAttendanceSheet';
 import { useChangeAttendanceStatus } from '@/features/employees/hooks/useEmployeeAttendance';
 import { useDebouncedCallback } from '@/hooks/useDebouncedCallback';
 import { TableToolbar } from '@/features/attendance/TableToolbar';
-import { AttendanceTableSkeleton } from '@/features/attendance/AttendanceTableSkeleton';
 import { mapAttendanceRecord } from '@/features/attendance/utils';
 import { useAttendance, useExportAttendance } from '@/features/attendance/hooks/useAttendance';
 import { SendEmailModal } from '@/features/attendance/SendEmailModal';
@@ -54,7 +54,6 @@ export default function Attendance() {
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
-  // mapping فقط (من غير ترتيب)
   const records = useMemo(() => {
     const rawRecords = data?.records ?? [];
     return rawRecords.map(mapAttendanceRecord);
@@ -99,8 +98,8 @@ export default function Attendance() {
       try {
         await changeStatus(attendanceId, newStatus);
         await refetch();
-      } catch (error) {
-        logger.error('Failed to change status:', error);
+      } catch (err) {
+        logger.error('Failed to change status:', err);
       }
     },
     [changeStatus, refetch]
@@ -164,25 +163,21 @@ export default function Attendance() {
         </CardHeader>
 
         <CardContent className="px-4 pb-4">
-          {isError && (
-            <div className="text-sm text-red-500 py-4 text-center">
-              حدث خطأ أثناء تحميل البيانات: {error?.message}
-            </div>
-          )}
+          <AttendanceTable
+            data={records}
+            onStatusChange={handleAttendanceStatusChange}
+            isChangingStatus={isChanging}
+            isLoading={isLoading}
+            isError={isError}
+            errorMessage={
+              error?.message
+                ? `حدث خطأ أثناء تحميل البيانات: ${error.message}`
+                : 'حدث خطأ أثناء تحميل البيانات'
+            }
+            onRetry={refetch}
+            skeletonRows={pageSize}
+          />
 
-          {isLoading ? (
-            <AttendanceTableSkeleton rows={pageSize} />
-          ) : records.length === 0 ? (
-            <div className="text-sm text-muted-foreground py-8 text-center">
-              لا توجد بيانات حضور مطابقة
-            </div>
-          ) : (
-            <AttendanceTable
-              data={records}
-              onStatusChange={handleAttendanceStatusChange}
-              isChangingStatus={isChanging}
-            />
-          )}
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
