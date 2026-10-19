@@ -1,12 +1,13 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode'; // npm i jwt-decode
 
 import DashboardLayout from '../layouts/DashboardLayout';
 import useAuthStore from '../store/useAuthStore';
-import EmployeeAttendance from '@/pages/EmployeeAttendance';
+import CompaniesPage from '@/pages/CompaniesPage';
 
-// Lazy Pages - Auth Pages
+// Auth pages
 const Login = lazy(() => import('@/features/auth/pages/Login'));
 const Register = lazy(() => import('@/features/auth/pages/Register'));
 const Verify = lazy(() => import('@/features/auth/pages/Verify'));
@@ -15,9 +16,11 @@ const ForgotPassword = lazy(() => import('@/features/auth/pages/ForgotPassword')
 const ResetPassword = lazy(() => import('@/features/auth/pages/ResetPassword'));
 const HRInvitation = lazy(() => import('@/features/auth/pages/HRInvitation'));
 
-// Lazy Pages - Dashboard Pages
+// Dashboard pages
 const Dashboard = lazy(() => import('../pages/Dashboard'));
+const AdminDashboard = lazy(() => import('../pages/AdminDashboard'));
 const Employees = lazy(() => import('../pages/Employees'));
+const EmployeeAttendance = lazy(() => import('@/pages/EmployeeAttendance'));
 const Attendance = lazy(() => import('../pages/Attendance'));
 const Requests = lazy(() => import('../pages/Requests'));
 const Payroll = lazy(() => import('../pages/Payroll'));
@@ -27,26 +30,50 @@ const Notifications = lazy(() => import('../pages/Notifications'));
 const Profile = lazy(() => import('../pages/Profile'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 
-function ProtectedRoute({ children }) {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const cookieExists = !!Cookies.get('authTokenBasma');
+const ADMIN_HOME = '/dashboard/admin';
 
-  // 🔒 Security: check BOTH store state AND actual cookie
-  if (!isAuthenticated || !cookieExists) {
+function getRoleFromToken(token) {
+  try {
+    return jwtDecode(token)?.role ?? null;
+  } catch {
+    return null; // malformed token
+  }
+}
+
+function ProtectedRoute({ children, allowedRoles }) {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const location = useLocation();
+  const token = Cookies.get('authTokenBasma');
+
+  // 1) Must be logged in (store + cookie)
+  if (!isAuthenticated || !token) {
+    return <Navigate to="/login" replace state={{ from: location }} />;
+  }
+
+  // 2) Must have a valid role in the token
+  const role = getRoleFromToken(token);
+  if (!role) {
     return <Navigate to="/login" replace />;
+  }
+
+  // 3) Super admin is always kept inside /dashboard/admin
+  if (role === 'super_admin' && !location.pathname.startsWith(ADMIN_HOME)) {
+    return <Navigate to={ADMIN_HOME} replace />;
+  }
+
+  // 4) Route-level role restriction
+  if (allowedRoles && !allowedRoles.includes(role)) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
 }
 
-// Loading fallback
 function PageLoader() {
   return (
     <div className="flex h-screen items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-4">
-        <div className="relative">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-        </div>
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
         <p className="text-sm text-muted-foreground animate-pulse">جاري التحميل...</p>
       </div>
     </div>
@@ -58,8 +85,16 @@ export default function AppRoutes() {
     <BrowserRouter>
       <Suspense fallback={<PageLoader />}>
         <Routes>
+          {/* Public */}
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/verify" element={<Verify />} />
+          <Route path="/setup" element={<Setup />} />
+          <Route path="/auth/invite" element={<HRInvitation />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
+          {/* Protected */}
           <Route
             path="/"
             element={
@@ -69,7 +104,14 @@ export default function AppRoutes() {
             }
           >
             <Route index element={<Navigate to="/dashboard" replace />} />
+
+            {/* hr + employee dashboard (super_admin gets bounced to /dashboard/admin) */}
             <Route path="dashboard" element={<Dashboard />} />
+
+            {/* super_admin only */}
+            <Route path="dashboard/admin" element={ <ProtectedRoute allowedRoles={['super_admin']}> <AdminDashboard /> </ProtectedRoute> } />
+            <Route path="dashboard/admin/companies" element={ <ProtectedRoute allowedRoles={['super_admin']}> <CompaniesPage /> </ProtectedRoute> } />
+
             <Route path="employees" element={<Employees />} />
             <Route path="employee/attendance/:id" element={<EmployeeAttendance />} />
             <Route path="attendance" element={<Attendance />} />
@@ -82,12 +124,6 @@ export default function AppRoutes() {
           </Route>
 
           <Route path="*" element={<NotFound />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/verify" element={<Verify />} />
-          <Route path="/setup" element={<Setup />} />
-          <Route path="/auth/invite" element={<HRInvitation />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

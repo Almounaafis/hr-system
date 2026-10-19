@@ -11,13 +11,17 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Wifi,
+  Building2,
 } from "lucide-react";
 
 import { cn, getInitials } from "@/lib/utils";
 import basma from "@/assets/basma.svg";
 import useAuthStore from "@/store/useAuthStore";
 
-const navigation = [
+const ADMIN_HOME = "/dashboard/admin";
+
+// HR + employee links
+const userNavigation = [
   { name: "لوحة التحكم", href: "/dashboard", icon: LayoutDashboard },
   { name: "الطلبات", href: "/requests", icon: ClipboardList },
   { name: "الموظفين", href: "/employees", icon: Users },
@@ -28,10 +32,29 @@ const navigation = [
   { name: "الإشعارات", href: "/notifications", icon: Bell },
 ];
 
+// Super admin links (all under /dashboard/admin)
+const adminNavigation = [
+  { name: "لوحة التحكم", href: ADMIN_HOME, icon: LayoutDashboard, exact: true },
+  { name: "الشركات", href: `${ADMIN_HOME}/companies`, icon: Building2 },
+  { name: "الإعدادات", href: `${ADMIN_HOME}/settings`, icon: Settings },
+  { name: "الإشعارات", href: `${ADMIN_HOME}/notifications`, icon: Bell },
+];
+
 export default function AppSidebar({ isOpen, collapsed, onToggle }) {
   const location = useLocation();
   const user = useAuthStore((state) => state.user);
   const closeOnMobile = () => isOpen && onToggle();
+
+  const isSuperAdmin = user?.role === "super_admin";
+  const navigation = isSuperAdmin ? adminNavigation : userNavigation;
+  const homeHref = isSuperAdmin ? ADMIN_HOME : "/dashboard";
+  const profileHref = isSuperAdmin ? `${ADMIN_HOME}/profile` : "/profile";
+
+  const isItemActive = (item) =>
+    item.exact
+      ? location.pathname === item.href
+      : location.pathname === item.href ||
+        location.pathname.startsWith(`${item.href}/`);
 
   return (
     <>
@@ -52,7 +75,7 @@ export default function AppSidebar({ isOpen, collapsed, onToggle }) {
       >
         <div className="flex h-16 items-center justify-between border-b px-4">
           <Link
-            to="/dashboard"
+            to={homeHref}
             onClick={closeOnMobile}
             className={cn("flex items-center gap-3", collapsed && "lg:hidden")}
           >
@@ -79,15 +102,15 @@ export default function AppSidebar({ isOpen, collapsed, onToggle }) {
                 collapsed && "lg:hidden",
               )}
             >
-              الإدارة الرئيسية
+              {isSuperAdmin ? "إدارة النظام" : "الإدارة الرئيسية"}
             </p>
 
             <nav className="flex flex-col gap-1">
               {navigation.map((item) => {
-                const isActive = location.pathname === item.href;
+                const isActive = isItemActive(item);
                 return (
                   <Link
-                    key={item.name}
+                    key={item.href}
                     to={item.href}
                     onClick={closeOnMobile}
                     title={item.name}
@@ -113,7 +136,7 @@ export default function AppSidebar({ isOpen, collapsed, onToggle }) {
 
         <div className="border-t p-4">
           <Link
-            to="/profile"
+            to={profileHref}
             onClick={closeOnMobile}
             className={cn(
               "flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted/50",
