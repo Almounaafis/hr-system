@@ -11,7 +11,7 @@ export default function HRInvitation() {
   const [searchParams] = useSearchParams();
 
   const { createItem: acceptInvitation, creating: accepting } = useCrud({
-    endpoint: '/auth/invite/accept/hr',
+    endpoint: '/auth/invite/accept/manager',
     enabled: false,
     useJsonPayload: true,
     onSuccess: handleAcceptSuccess,

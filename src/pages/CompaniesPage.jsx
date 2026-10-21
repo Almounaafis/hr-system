@@ -1,21 +1,35 @@
-// @/features/companies/CompaniesPage.jsx
-import { useState } from "react";
-import { Plus } from "lucide-react";
+// @/features/companies/CompanyManagementPage.jsx
+import { useState, useMemo } from "react";
+import { Plus, UserPlus, Search, Building2, Users, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FormField, FormControl } from "@/components/ui/form-field";
 import logger from "@/lib/logger";
+
+// Components
 import CompaniesTable from "@/features/companies/CompaniesTable";
 import CompanyModal from "@/features/companies/CompanyModal";
-import { useCompanies } from "@/features/companies/hooks/useCompanies";
-import { useInviteHr } from "@/features/invetations/useInviteHr";
-import InviteHrDialog from "@/features/companies/InviteHrDialog";
+import InviteHrDialog from "@/features/hrs/InviteHrDialog"; // Assuming it's here based on your imports
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
+import { FilterDropdown } from "@/features/requests/FilterDropdown";
 
-export default function CompaniesPage() {
+// Hooks
+import { useCompanies } from "@/features/companies/hooks/useCompanies";
+import { useAllCompaniesManagers, useInviteCompanyManager } from "@/features/managers/hooks/useCompanyManagers";
+import CompanyHrsTable from "@/features/hrs/CompanyHrsTable";
+import CompanyManagersTable from "@/features/managers/CompanyManagersTable";
+import { useAllCompaniesHrs, useInviteCompanyHr } from "@/features/hrs/hooks/useCompanyHrs";
+
+export default function CompanyManagementPage() {
+  // ─── Active Tab State ────────────────────────────────────────────────────────
+  const [activeTab, setActiveTab] = useState("companies"); // 'companies' | 'hrs' | 'managers'
+
+  // ─── Data Fetching ───────────────────────────────────────────────────────────
+  // 1. Companies (always needed for all tabs to map IDs/names)
   const {
     companies,
-    isLoading,
-    isError,
-    refetch,
+    isLoading: isLoadingCompanies,
+    isError: isErrorCompanies,
+    refetch: refetchCompanies,
     createCompany,
     updateCompany,
     deleteCompany,
@@ -24,34 +38,97 @@ export default function CompaniesPage() {
     deleting,
   } = useCompanies();
 
-  const { inviteHr, isInviting } = useInviteHr();
+  // 2. HRs (only fetch if on the HR tab to save network requests)
+  const {
+    allHrs,
+    isLoading: isLoadingHrs,
+    isError: isErrorHrs,
+    refetchAll: refetchHrs,
+  } = useAllCompaniesHrs(activeTab === "hrs" ? companies : []);
 
-  // Company create/edit modal
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // 3. Managers (only fetch if on the Managers tab)
+  const {
+    allManagers,
+    isLoading: isLoadingManagers,
+    isError: isErrorManagers,
+    refetchAll: refetchManagers,
+  } = useAllCompaniesManagers(activeTab === "managers" ? companies : []);
+
+  // ─── Filters & Search ───────────────────────────────────────────────────────
+  const [filterCompanyId, setFilterCompanyId] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Apply Company Filter
+  const filteredHrs = useMemo(() => {
+    let result = allHrs;
+    if (filterCompanyId !== "all") result = result.filter((hr) => hr.company?.id === filterCompanyId);
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter((hr) => hr.name?.toLowerCase().includes(q) || hr.email?.toLowerCase().includes(q));
+    }
+    return result;
+  }, [allHrs, filterCompanyId, searchQuery]);
+
+  const filteredManagers = useMemo(() => {
+    let result = allManagers;
+    if (filterCompanyId !== "all") result = result.filter((mgr) => mgr.company?.id === filterCompanyId);
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter((mgr) => mgr.name?.toLowerCase().includes(q) || mgr.email?.toLowerCase().includes(q));
+    }
+    return result;
+  }, [allManagers, filterCompanyId, searchQuery]);
+
+  // ─── Modals State ───────────────────────────────────────────────────────────
+  // Company Modal
+  const [isCompanyModalOpen, setIsCompanyModalOpen] = useState(false);
   const [editingCompany, setEditingCompany] = useState(null);
-
-  // Invite HR dialog
-  const [inviteCompany, setInviteCompany] = useState(null);
-
-  // Delete confirmation dialog
+  
+  // Delete Confirmation
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const handleAddClick = () => {
+  // Invite Modal (Shared for HR & Manager)
+  const [inviteContext, setInviteContext] = useState(null); // { type: 'hr' | 'manager', companyId: string }
+  const [selectedCompanyIdForInvite, setSelectedCompanyIdForInvite] = useState("");
+
+  // Invite Mutations
+  const { inviteHr, isInviting: isInvitingHr } = useInviteCompanyHr(inviteContext?.type === "hr" ? selectedCompanyIdForInvite : null);
+  const { inviteManager, isInviting: isInvitingManager } = useInviteCompanyManager(inviteContext?.type === "manager" ? selectedCompanyIdForInvite : null);
+
+  // ─── Handlers ───────────────────────────────────────────────────────────────
+
+  // Tab switch resets filters
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setSearchQuery("");
+    setFilterCompanyId("all");
+  };
+
+  // Company CRUD
+  const handleAddCompanyClick = () => {
     setEditingCompany(null);
-    setIsModalOpen(true);
+    setIsCompanyModalOpen(true);
   };
 
-  const handleEditClick = (company) => {
+  const handleEditCompanyClick = (company) => {
     setEditingCompany(company);
-    setIsModalOpen(true);
+    setIsCompanyModalOpen(true);
   };
 
-  // 1. Open the confirmation modal
-  const handleDeleteClick = (company) => {
-    setDeleteTarget(company);
+  const handleSaveCompany = async (values) => {
+    try {
+      if (editingCompany) {
+        await updateCompany(editingCompany.id, values);
+      } else {
+        await createCompany(values);
+      }
+      setIsCompanyModalOpen(false);
+      setEditingCompany(null);
+    } catch (error) {
+      logger.error("Error saving company:", error);
+    }
   };
 
-  // 2. Perform deletion when confirmed
   const handleConfirmDelete = async () => {
     if (!deleteTarget) return;
     try {
@@ -62,94 +139,201 @@ export default function CompaniesPage() {
     }
   };
 
-  const handleInviteHrClick = (company) => {
-    setInviteCompany(company);
+  // Invite Handlers
+  const handleOpenInvite = (type, companyId = null) => {
+    setInviteContext({ type });
+    // Pre-select company if filtered, otherwise default to first company
+    setSelectedCompanyIdForInvite(companyId || (filterCompanyId !== "all" ? filterCompanyId : companies[0]?.id || ""));
   };
 
-  const handleInviteHrSubmit = async (email) => {
-    if (!inviteCompany?.id) return;
-    try {
-      await inviteHr({ companyId: inviteCompany.id, email });
-      setInviteCompany(null);
-    } catch (error) {
-      logger.error("Error inviting HR:", error);
+  const handleInviteSubmit = async (email) => {
+    if (!selectedCompanyIdForInvite) return;
+    if (inviteContext.type === "hr") {
+      await inviteHr(email);
+    } else {
+      await inviteManager(email);
     }
+    setInviteContext(null);
   };
 
-  const handleSave = async (values) => {
-    try {
-      if (editingCompany) {
-        await updateCompany(editingCompany.id, values);
-      } else {
-        await createCompany(values);
-      }
-      setIsModalOpen(false);
-      setEditingCompany(null);
-    } catch (error) {
-      logger.error("Error saving company:", error);
-    }
-  };
+  // ─── Render Helpers ─────────────────────────────────────────────────────────
+  const currentCompanyForInvite = companies.find((c) => c.id === selectedCompanyIdForInvite);
 
   return (
     <div dir="rtl" className="space-y-6 p-2 sm:p-1">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">
-            الشركات
-          </h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">إدارة الشركات والصلاحيات</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            أضف وأدر الشركات المسجلة في النظام مع فروعها وأقسامها.
+            أضف الشركات وأدر المحاسبين والمدراء المسجلين في النظام.
           </p>
         </div>
-        <Button onClick={handleAddClick} className="gap-2 shrink-0">
-          <Plus className="h-4 w-4" /> إضافة شركة
-        </Button>
+        
+        {/* Main Action Button (Dynamic based on Tab) */}
+        {activeTab === "companies" && (
+          <Button onClick={handleAddCompanyClick} className="gap-2 shrink-0">
+            <Plus className="h-4 w-4" /> إضافة شركة
+          </Button>
+        )}
+        {activeTab === "hrs" && (
+          <Button 
+            onClick={() => handleOpenInvite("hr")} 
+            className="gap-2 shrink-0 bg-[#4E9DA8] hover:bg-[#4E9DA8]/90"
+            disabled={companies.length === 0}
+          >
+            <UserPlus className="h-4 w-4" /> إضافة محاسب
+          </Button>
+        )}
+        {activeTab === "managers" && (
+          <Button 
+            onClick={() => handleOpenInvite("manager")} 
+            className="gap-2 shrink-0 bg-[#4E9DA8] hover:bg-[#4E9DA8]/90"
+            disabled={companies.length === 0}
+          >
+            <UserPlus className="h-4 w-4" /> إضافة مدير
+          </Button>
+        )}
       </div>
 
-      {/* Content */}
+      {/* Tabs */}
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        <button
+          onClick={() => handleTabChange("companies")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap ${
+            activeTab === "companies" ? "bg-primary text-primary-foreground shadow-sm" : "bg-muted text-muted-foreground hover:bg-muted/80"
+          }`}
+        >
+          <Building2 className="h-4 w-4" /> الشركات
+        </button>
+        <button
+          onClick={() => handleTabChange("hrs")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap ${
+            activeTab === "hrs" ? "bg-primary text-primary-foreground shadow-sm" : "bg-muted text-muted-foreground hover:bg-muted/80"
+          }`}
+        >
+          <Users className="h-4 w-4" /> مسؤولي ال HR
+        </button>
+        <button
+          onClick={() => handleTabChange("managers")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap ${
+            activeTab === "managers" ? "bg-primary text-primary-foreground shadow-sm" : "bg-muted text-muted-foreground hover:bg-muted/80"
+          }`}
+        >
+          <ShieldCheck className="h-4 w-4" /> المدراء
+        </button>
+      </div>
+
+      {/* Content Area */}
       <div className="bg-card rounded-xl border border-border shadow-sm p-4 sm:p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <h2 className="text-lg font-semibold">الشركات المسجلة</h2>
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-sm font-medium text-muted-foreground">
-            {isLoading || isError ? "—" : companies.length}
-          </span>
-        </div>
+        
+        {/* Toolbar (only for HR and Manager tabs) */}
+        {activeTab !== "companies" && (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-3">
+              <h2 className="text-lg font-semibold">
+                {activeTab === "hrs" ? "قائمة مسؤولي ال HRs" : "قائمة المدراء"}
+              </h2>
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-sm font-medium text-muted-foreground">
+                {activeTab === "hrs" 
+                  ? (isLoadingHrs || isErrorHrs ? "—" : filteredHrs.length)
+                  : (isLoadingManagers || isErrorManagers ? "—" : filteredManagers.length)
+                }
+              </span>
+            </div>
 
-        <CompaniesTable
-          companies={companies}
-          isLoading={isLoading}
-          isError={isError}
-          onEdit={handleEditClick}
-          onDelete={handleDeleteClick}
-          onInviteHr={handleInviteHrClick}
-          onRetry={refetch}
-          skeletonRows={5}
-        />
+            <div className="flex flex-wrap items-center gap-2">
+              <FormField name="search" className="relative w-full sm:w-64">
+                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+                <FormControl
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="بحث بالاسم أو الإيميل..."
+                  className="pr-10 rounded-lg bg-background"
+                />
+              </FormField>
+              
+              <FilterDropdown
+                label="الشركة"
+                value={filterCompanyId}
+                onChange={setFilterCompanyId}
+                options={[
+                  { value: "all", label: "كل الشركات" },
+                  ...companies.map((c) => ({ value: c.id, label: c.name })),
+                ]}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Tables Area */}
+        {activeTab === "companies" && (
+          <>
+            <div className="flex items-center gap-3 mb-6">
+              <h2 className="text-lg font-semibold">الشركات المسجلة</h2>
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-sm font-medium text-muted-foreground">
+                {isLoadingCompanies || isErrorCompanies ? "—" : companies.length}
+              </span>
+            </div>
+            <CompaniesTable
+              companies={companies}
+              isLoading={isLoadingCompanies}
+              isError={isErrorCompanies}
+              onEdit={handleEditCompanyClick}
+              onDelete={(c) => setDeleteTarget(c)}
+              onInviteHr={(c) => handleOpenInvite("hr", c.id)}
+              onRetry={refetchCompanies}
+            />
+          </>
+        )}
+
+        {activeTab === "hrs" && (
+          <CompanyHrsTable
+            hrs={filteredHrs}
+            isLoading={isLoadingHrs || isLoadingCompanies}
+            isError={isErrorHrs}
+            onRetry={refetchHrs}
+            skeletonRows={5}
+          />
+        )}
+
+        {activeTab === "managers" && (
+          <CompanyManagersTable
+            managers={filteredManagers}
+            isLoading={isLoadingManagers || isLoadingCompanies}
+            isError={isErrorManagers}
+            onRetry={refetchManagers}
+            skeletonRows={5}
+          />
+        )}
       </div>
 
-      {/* Create / Edit modal */}
+      {/* ─── Modals ─────────────────────────────────────────────────────────── */}
+
+      {/* Create / Edit Company */}
       <CompanyModal
-        open={isModalOpen}
+        open={isCompanyModalOpen}
         onClose={() => {
-          setIsModalOpen(false);
+          setIsCompanyModalOpen(false);
           setEditingCompany(null);
         }}
-        onSubmit={handleSave}
+        onSubmit={handleSaveCompany}
         editingCompany={editingCompany}
         submitting={creating || updating || deleting}
       />
 
-      {/* Invite HR dialog */}
+      {/* Invite Modal (Shared for HR / Manager) */}
       <InviteHrDialog
-        open={!!inviteCompany}
-        onClose={() => setInviteCompany(null)}
-        company={inviteCompany}
-        onSubmit={handleInviteHrSubmit}
-        submitting={isInviting}
+        title={inviteContext?.type === "manager" ? "إضافة مدير شركة" : "إضافة HR جديد"}
+        open={!!inviteContext}
+        onClose={() => setInviteContext(null)}
+        company={currentCompanyForInvite}
+        onSubmit={handleInviteSubmit}
+        submitting={inviteContext?.type === "manager" ? isInvitingManager : isInvitingHr}
       />
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Confirmation */}
       <ConfirmDialog
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}

@@ -6,6 +6,8 @@ import { jwtDecode } from 'jwt-decode'; // npm i jwt-decode
 import DashboardLayout from '../layouts/DashboardLayout';
 import useAuthStore from '../store/useAuthStore';
 import CompaniesPage from '@/pages/CompaniesPage';
+import CompanyHrsPage from '@/pages/CompanyHrsPage';
+import CompanyManagersPage from '@/pages/CompanyManagersPage';
 
 // Auth pages
 const Login = lazy(() => import('@/features/auth/pages/Login'));
@@ -109,8 +111,10 @@ export default function AppRoutes() {
             <Route path="dashboard" element={<Dashboard />} />
 
             {/* super_admin only */}
-            <Route path="dashboard/admin" element={ <ProtectedRoute allowedRoles={['super_admin']}> <AdminDashboard /> </ProtectedRoute> } />
-            <Route path="dashboard/admin/companies" element={ <ProtectedRoute allowedRoles={['super_admin']}> <CompaniesPage /> </ProtectedRoute> } />
+            <Route path="dashboard/admin" element={<ProtectedRoute allowedRoles={['super_admin']}> <AdminDashboard /> </ProtectedRoute>} />
+            <Route path="dashboard/admin/companies" element={<ProtectedRoute allowedRoles={['super_admin']}> <CompaniesPage /> </ProtectedRoute>} />
+            <Route path="dashboard/admin/hrs" element={<ProtectedRoute allowedRoles={['super_admin']}> <CompanyHrsPage /> </ProtectedRoute>} />
+            <Route path="dashboard/admin/managers" element={<ProtectedRoute allowedRoles={['super_admin']}> <CompanyManagersPage /> </ProtectedRoute>} />
 
             <Route path="employees" element={<Employees />} />
             <Route path="employee/attendance/:id" element={<EmployeeAttendance />} />

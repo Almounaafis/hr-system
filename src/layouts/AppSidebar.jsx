@@ -12,6 +12,8 @@ import {
   PanelLeftOpen,
   Wifi,
   Building2,
+  User,
+  UserCog,
 } from "lucide-react";
 
 import { cn, getInitials } from "@/lib/utils";
@@ -36,6 +38,8 @@ const userNavigation = [
 const adminNavigation = [
   { name: "لوحة التحكم", href: ADMIN_HOME, icon: LayoutDashboard, exact: true },
   { name: "الشركات", href: `${ADMIN_HOME}/companies`, icon: Building2 },
+  { name: "مسؤولي الـ HR", href: `${ADMIN_HOME}/hrs`, icon: User },
+  { name: "مدراء الشركات", href: `${ADMIN_HOME}/managers`, icon: UserCog },
   { name: "الإعدادات", href: `${ADMIN_HOME}/settings`, icon: Settings },
   { name: "الإشعارات", href: `${ADMIN_HOME}/notifications`, icon: Bell },
 ];
@@ -54,7 +58,7 @@ export default function AppSidebar({ isOpen, collapsed, onToggle }) {
     item.exact
       ? location.pathname === item.href
       : location.pathname === item.href ||
-        location.pathname.startsWith(`${item.href}/`);
+      location.pathname.startsWith(`${item.href}/`);
 
   return (
     <>
