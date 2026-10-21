@@ -33,7 +33,7 @@ jobs:
 
             node -v
             npm -v
-`
+            
             cd /var/www/basma-frontend
 
             echo "Pulling latest code..."
