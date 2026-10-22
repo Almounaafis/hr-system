@@ -113,8 +113,7 @@ export default function AppRoutes() {
             {/* super_admin only */}
             <Route path="dashboard/admin" element={<ProtectedRoute allowedRoles={['super_admin']}> <AdminDashboard /> </ProtectedRoute>} />
             <Route path="dashboard/admin/companies" element={<ProtectedRoute allowedRoles={['super_admin']}> <CompaniesPage /> </ProtectedRoute>} />
-            <Route path="dashboard/admin/hrs" element={<ProtectedRoute allowedRoles={['super_admin']}> <CompanyHrsPage /> </ProtectedRoute>} />
-            <Route path="dashboard/admin/managers" element={<ProtectedRoute allowedRoles={['super_admin']}> <CompanyManagersPage /> </ProtectedRoute>} />
+            <Route path="dashboard/admin/settings" element={<ProtectedRoute allowedRoles={['super_admin']}> <Settings /> </ProtectedRoute>} />
 
             <Route path="employees" element={<Employees />} />
             <Route path="employee/attendance/:id" element={<EmployeeAttendance />} />
