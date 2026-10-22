@@ -38,8 +38,6 @@ const userNavigation = [
 const adminNavigation = [
   { name: "لوحة التحكم", href: ADMIN_HOME, icon: LayoutDashboard, exact: true },
   { name: "الشركات", href: `${ADMIN_HOME}/companies`, icon: Building2 },
-  { name: "مسؤولي الـ HR", href: `${ADMIN_HOME}/hrs`, icon: User },
-  { name: "مدراء الشركات", href: `${ADMIN_HOME}/managers`, icon: UserCog },
   { name: "الإعدادات", href: `${ADMIN_HOME}/settings`, icon: Settings },
   { name: "الإشعارات", href: `${ADMIN_HOME}/notifications`, icon: Bell },
 ];
