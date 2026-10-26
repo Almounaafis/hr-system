@@ -8,6 +8,11 @@ import useAuthStore from '../store/useAuthStore';
 import CompaniesPage from '@/pages/CompaniesPage';
 import CompanyHrsPage from '@/pages/CompanyHrsPage';
 import CompanyManagersPage from '@/pages/CompanyManagersPage';
+import RecruitmentPage from '@/pages/RecruitmentPage';
+import ApplicationsPage from '@/pages/ApplicationsPage';
+import InterviewsPage from '@/pages/InterviewsPage';
+import TraineesPage from '@/pages/TraineesPage';
+import CustodiesPage from '@/pages/CustodiesPage';
 
 // Auth pages
 const Login = lazy(() => import('@/features/auth/pages/Login'));
@@ -109,7 +114,7 @@ export default function AppRoutes() {
 
             {/* hr + employee dashboard (super_admin gets bounced to /dashboard/admin) */}
             <Route path="dashboard" element={<Dashboard />} />
-
+p
             {/* super_admin only */}
             <Route path="dashboard/admin" element={<ProtectedRoute allowedRoles={['super_admin']}> <AdminDashboard /> </ProtectedRoute>} />
             <Route path="dashboard/admin/companies" element={<ProtectedRoute allowedRoles={['super_admin']}> <CompaniesPage /> </ProtectedRoute>} />
@@ -124,6 +129,11 @@ export default function AppRoutes() {
             <Route path="networks" element={<Networks />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="recruitment" element={<RecruitmentPage />} />
+            {/* <Route path="applications" element={<ApplicationsPage />} /> */}
+            {/* <Route path="interviews" element={<InterviewsPage />} /> */}
+            <Route path="trainees" element={<TraineesPage />} />
+            <Route path="custodies" element={<CustodiesPage />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

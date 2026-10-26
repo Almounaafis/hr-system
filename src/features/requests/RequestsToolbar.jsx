@@ -1,8 +1,8 @@
-﻿import { Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { FormField, FormControl } from "@/components/ui/form-field";
 import { FilterDropdown } from "@/features/requests/FilterDropdown";
 import { COLUMN_CONFIG, STATUS_LABELS } from "@/features/requests/lib/constants";
-import { DatePicker } from "@/components/shared/forms/DatePicker";
+import { DateInput } from "@/components/ui/date-input";
 
 export const RequestsToolbar = ({
   searchQuery,
@@ -31,9 +31,9 @@ export const RequestsToolbar = ({
             className="pr-10 rounded-lg w-48"
           />
         </FormField>
-        <DatePicker
+        <DateInput
           value={filterDate}
-          onChange={setFilterDate}
+          onChange={(e) => setFilterDate(e.target.value)}
           placeholder="اختر التاريخ"
         />
         <FilterDropdown

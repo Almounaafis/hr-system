@@ -68,11 +68,15 @@ const FormControl = React.forwardRef(({ type = "text", options, className, ...pr
 
   if (type === "select" && options) {
     const { onChange, onBlur, ref: registerRef, ...restProps } = props
+    const selectProps = { ...restProps }
+    if (selectProps.value === undefined) {
+      delete selectProps.value
+    }
     return (
       <Select
-        {...restProps}
+        {...selectProps}
         onValueChange={(value) => {
-          onChange({ target: { value, name } })
+          onChange?.({ target: { value, name } })
         }}
         onOpenChange={(open) => {
           // react-hook-form's onBlur (from register) reads event.target,
@@ -81,8 +85,8 @@ const FormControl = React.forwardRef(({ type = "text", options, className, ...pr
         }}
       >
         <SelectTrigger type="button" className={inputClassName} ref={registerRef}>
-  <SelectValue placeholder={props.placeholder} />
-</SelectTrigger>
+          <SelectValue placeholder={props.placeholder} />
+        </SelectTrigger>
         {selectContent}
       </Select>
     )

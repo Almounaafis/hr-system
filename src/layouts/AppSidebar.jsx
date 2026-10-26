@@ -14,6 +14,7 @@ import {
   Building2,
   User,
   UserCog,
+  Package,
 } from "lucide-react";
 
 import { cn, getInitials } from "@/lib/utils";
@@ -22,13 +23,18 @@ import useAuthStore from "@/store/useAuthStore";
 
 const ADMIN_HOME = "/dashboard/admin";
 
-// HR + employee links
+// HR + Manger + employee links
 const userNavigation = [
   { name: "لوحة التحكم", href: "/dashboard", icon: LayoutDashboard },
   { name: "الطلبات", href: "/requests", icon: ClipboardList },
   { name: "الموظفين", href: "/employees", icon: Users },
   { name: "الحضور والانصراف", href: "/attendance", icon: CalendarCheck },
   { name: "الرواتب", href: "/payroll", icon: DollarSign },
+  { name: "التوظيف", href: "/recruitment", icon: DollarSign },
+  // { name: "طلبات التوظيف", href: "/applications", icon: ClipboardList },
+  // { name: "المقابلات", href: "/interviews", icon: CalendarCheck },
+  { name: "المتدربين", href: "/trainees", icon: CalendarCheck },
+  { name: "العهد", href: "/custodies", icon: Package },
   { name: "شبكات الحضور", href: "/networks", icon: Wifi },
   { name: "الإعدادات", href: "/settings", icon: Settings },
   { name: "الإشعارات", href: "/notifications", icon: Bell },

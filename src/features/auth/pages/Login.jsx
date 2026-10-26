@@ -2,12 +2,12 @@ import { useNavigate } from 'react-router-dom';
 import useAuthStore from '@/store/useAuthStore';
 import logger from '@/lib/logger';
 import { useCrud } from '@/hooks/useCrud';
+import { setAccessToken, setRefreshToken } from '@/lib/axios';
 import LoginPhotoPanel from '@/features/auth/LoginPhotoPanel';
 import { LoginHeader } from '@/features/auth/Login/LoginHeader';
 import { LoginForm } from '@/features/auth/Login/LoginForm';
 import { SocialLogin } from '@/features/auth/Login/SocialLogin';
 import { RegisterLink } from '@/features/auth/Login/RegisterLink';
-import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
 
 export default function Login() {
@@ -27,6 +27,7 @@ export default function Login() {
       response?.accessToken ||
       response?.data?.token ||
       response?.token;
+    const refreshToken = response?.data?.refreshToken || response?.refreshToken;
     const user = response?.data?.user || response?.user;
     const requiresOTP = response?.data?.requiresOTP || response?.requiresOTP || false;
 
@@ -37,11 +38,8 @@ export default function Login() {
 
     if (!token) return logger.warn('No token received');
 
-    Cookies.set('authTokenBasma', token, {
-      expires: 7,
-      secure: true,
-      sameSite: 'strict',
-    });
+    setAccessToken(token);
+    if (refreshToken) setRefreshToken(refreshToken);
 
     login({ user, token, requiresOTP });
     toast.success(response?.message || 'تم تسجيل الدخول بنجاح');
