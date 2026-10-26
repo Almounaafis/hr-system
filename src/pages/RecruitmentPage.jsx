@@ -287,7 +287,7 @@ export default function RecruitmentPage() {
             isError={isErrorPositions}
             onEdit={(pos) => { setEditingPosition(pos); setIsPositionModalOpen(true); }}
             onDelete={setDeleteTarget}
-            onView={(pos) => setApplyPositionId(pos.id)}
+            // onView={(pos) => setApplyPositionId(pos.id)}
             onRetry={refetchPositions}
             skeletonRows={limit}
           />

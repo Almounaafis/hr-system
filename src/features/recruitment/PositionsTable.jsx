@@ -60,12 +60,12 @@ function PositionActionsMenu({ position, onEdit, onDelete, onView }) {
           style={{ position: "fixed", top: coords.top, left: coords.left }}
           className="z-[9999] min-w-[140px] rounded-xl border border-border bg-card shadow-lg py-1"
         >
-          <button
+          {/* <button
             onClick={() => { setOpen(false); onView(position); }}
             className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-muted"
           >
             <Eye className="h-3.5 w-3.5 text-muted-foreground" /> عرض / التقديم
-          </button>
+          </button> */}
           <button
             onClick={() => { setOpen(false); onEdit(position); }}
             className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-muted"
@@ -177,7 +177,7 @@ export default function PositionsTable({
             position={pos}
             onEdit={onEdit}
             onDelete={onDelete}
-            onView={onView}
+            // onView={onView}
           />
         </div>
       ),
